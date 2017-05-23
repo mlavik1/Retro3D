@@ -9,12 +9,14 @@
 #include "game_engine.h"
 #include "window.h"
 #include "input_manager.h"
+#include "level.h"
 
 
 /* BEGIN: TEMP FOR TESTING */
-#define MAP_DIM_X 15
-#define MAP_DIM_Y 15
+//#define MAP_DIM_X 15
+//#define MAP_DIM_Y 15
 
+/*
 int map[MAP_DIM_Y][MAP_DIM_X] = {
 	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
@@ -31,7 +33,7 @@ int map[MAP_DIM_Y][MAP_DIM_X] = {
 	{ 1,0,1,0,0,0,0,0,0,1,0,0,0,0,0 },
 	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,0 }
-};
+};*/
 
 float fov = 60;
 float camWidth = 0.2f;
@@ -87,6 +89,10 @@ namespace Retro3D
 	void SceneRenderer::RenderScene()
 	{
 		const Uint64 start = SDL_GetPerformanceCounter();
+
+
+		Level* currentLevel = GGameEngine->GetCurrentLevel();
+
 
 		/*** Camera space ***/
 		const float camAspect = (float)texWidth / texHeight;
@@ -144,10 +150,10 @@ namespace Retro3D
 				const int gridY = floorf(currPos.y);
 
 				// check new grid cell:
-				if (gridY >= MAP_DIM_Y || gridX >= MAP_DIM_X || gridY < 0 || gridX < 0)
+				if (gridY >= currentLevel->GetDimensionY() || gridX >= currentLevel->GetDimensionX() || gridY < 0 || gridX < 0)
 					break;
 
-				gridCellValue = map[gridY][gridX];
+				gridCellValue = currentLevel->GetWallMapCell(gridX, gridY);
 				if (gridCellValue != 0) // hit something!
 				{
 					break;

@@ -30,7 +30,16 @@ namespace Retro3D
 
 		bool LoadLevel(const char* arg_name);
 
-		inline int GetMapIndex(const int& arg_x, const int& arg_y) { return arg_x + arg_y*mDimX;; }
+		inline int GetMapIndex(const int& arg_x, const int& arg_y) const { return arg_x + arg_y*mDimX;; }
+
+		inline const int& GetWallMapCell(const int arg_x, const int arg_y) const
+		{
+			const int& index = GetMapIndex(arg_x, arg_y);
+			return mWallMap[index];
+		}
+
+		inline const int& GetDimensionX() { return mDimX; }
+		inline const int& GetDimensionY() { return mDimY; }
 
 	};
 }
