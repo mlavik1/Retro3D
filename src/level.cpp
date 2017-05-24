@@ -35,12 +35,14 @@ namespace Retro3D
 		std::string wallMapName;
 		std::string floorMapName;
 		std::string ceilingMapName;
+		std::string skyboxTexture;
 		int dimX = 0;
 		int dimY = 0;
 
 		levelReader.GetString("level", "map_wall", wallMapName);
 		levelReader.GetString("level", "map_floor", floorMapName);
 		levelReader.GetString("level", "map_ceiling", ceilingMapName);
+		levelReader.GetString("level", "skybox", skyboxTexture);
 		levelReader.GetInt("level", "dim_x", dimX);
 		levelReader.GetInt("level", "dim_x", dimY);
 
@@ -63,6 +65,8 @@ namespace Retro3D
 			loadMap(floorMapName.c_str(), MapType::FloorMap);
 		if (ceilingMapName != "")
 			loadMap(ceilingMapName.c_str(), MapType::CeilingMap);
+
+		mSkyboxTexture = skyboxTexture;
 
 		return true;
 	}
@@ -105,7 +109,6 @@ namespace Retro3D
 			{
 				try
 				{
-					LOG_INFO() << "";
 					__AssertComment(i_x < mDimX && i_y < mDimY, "Invalid map file");
 					char cellValue = currCell.c_str()[0];
 					const int& mapIndex = GetMapIndex(i_x, i_y);

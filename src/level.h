@@ -23,6 +23,7 @@ namespace Retro3D
 		std::vector<char> mFloorMap;
 
 		std::unordered_map<char, std::string> mTextureMap;
+		std::string mSkyboxTexture;
 
 		void setDimension(int arg_x, int arg_y);
 		bool loadMap(const char* arg_filename, MapType arg_type);
@@ -55,6 +56,7 @@ namespace Retro3D
 
 		inline const std::unordered_map<char, std::string> GetTextureMap() { return mTextureMap; }
 
+		inline const std::string& GetSkyboxTexture() { return mSkyboxTexture; }
 	};
 }
 

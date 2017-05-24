@@ -23,6 +23,7 @@ namespace Retro3D
 		uint32_t getpixel(const SDL_Surface* arg_surface, int arg_x, int arg_y);
 		Level* mLevel;
 		std::unordered_map<char, SDL_Surface*> mTextureSurfaceMap;
+		SDL_Surface* mSkyboxTexture = nullptr;
 	};
 }
 

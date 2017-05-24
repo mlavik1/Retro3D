@@ -64,6 +64,11 @@ namespace Retro3D
 			SDL_Surface* surface = IMG_Load(fullPath.c_str());
 			__AssertComment(surface != nullptr, std::string("Unable to load texture: " + fullPath)); // todo
 			mTextureSurfaceMap[textureKeyPair.first] = surface;
+			if (mLevel->GetSkyboxTexture() != "")
+			{
+				mSkyboxTexture = IMG_Load((std::string("resources\\textures\\") + mLevel->GetSkyboxTexture()).c_str());
+				__Assert(mSkyboxTexture != nullptr);
+			}
 		}
 	}
 
@@ -73,6 +78,8 @@ namespace Retro3D
 
 		__Assert(mLevel != nullptr);
 
+		const std::string& skyboxTexture = mLevel->GetSkyboxTexture();
+		bool renderSkybox = skyboxTexture != "";
 
 		/*** Camera space ***/
 		const float camAspect = (float)texWidth / texHeight;
@@ -190,19 +197,41 @@ namespace Retro3D
 				const int gridX = floorf(roofHit.x);
 				const int gridY = floorf(roofHit.y);
 				const char& ceilingTextureKey = mLevel->GetCeilingMapCell(gridX, gridY);
-				if (ceilingTextureKey == 0)
-					continue;
+				if (ceilingTextureKey != 0)
+				{
+					const SDL_Surface* ceilingTextureSurface = mTextureSurfaceMap[ceilingTextureKey];
+					const glm::vec2 uv(roofHit.x - gridX, roofHit.y - gridY);
+					const Uint32 pixelColour = getpixel(ceilingTextureSurface, uv.x * ceilingTextureSurface->w, uv.y * ceilingTextureSurface->h);
+					const Uint8 r = pixelColour;
+					const Uint8 g = *(((Uint8*)&pixelColour) + 1);
+					const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
 
-				const SDL_Surface* ceilingTextureSurface = mTextureSurfaceMap[ceilingTextureKey];
-				const glm::vec2 uv(roofHit.x - gridX, roofHit.y - gridY);
-				const Uint32 pixelColour = getpixel(ceilingTextureSurface, uv.x * ceilingTextureSurface->w, uv.y * ceilingTextureSurface->h);
-				const Uint8 r = pixelColour;
-				const Uint8 g = *(((Uint8*)&pixelColour) + 1);
-				const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
+					pixels[offset + 0] = b;
+					pixels[offset + 1] = g;
+					pixels[offset + 2] = r;
+				}
+				else if(renderSkybox)
+				{
+					float tSkybox;
+					const bool xAxisSkyboxInters = fabsf(rayDir2.x) > fabsf(rayDir2.y);
+					if(xAxisSkyboxInters)
+						tSkybox = (200.0f * (rayDir2.x > 0 ? 1.0f : -1.0f)) / rayDir2.x;
+					else
+						tSkybox = (200.0f * (rayDir2.y > 0 ? 1.0f : -1.0f)) / rayDir2.y;
+					const glm::vec3 skyboxHit = camPos + rayDir2*tSkybox;
 
-				pixels[offset + 0] = b;
-				pixels[offset + 1] = g;
-				pixels[offset + 2] = r;
+					const float u = !xAxisSkyboxInters ? (200.0f + skyboxHit.x - camPos.x) / 400.0f : (200.0f + skyboxHit.y - camPos.y) / 400.0f;
+					const float v = 1.0f- (200.0f + skyboxHit.z - camPos.z) / 400.0f; // TODO: inverted??
+					const glm::vec2 uv(u,v);
+					const Uint32 pixelColour = getpixel(mSkyboxTexture, uv.x * mSkyboxTexture->w, uv.y * mSkyboxTexture->h);
+					const Uint8 r = pixelColour;
+					const Uint8 g = *(((Uint8*)&pixelColour) + 1);
+					const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
+
+					pixels[offset + 0] = b;
+					pixels[offset + 1] = g;
+					pixels[offset + 2] = r;
+				}
 			}
 
 			/*** Draw floor ***/
