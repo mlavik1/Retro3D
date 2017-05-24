@@ -27,63 +27,10 @@ namespace Retro3D
 	{
 		std::string fullPath = std::string("resources//levels//") + std::string(arg_name) + std::string(".level");
 
-		std::ifstream levelFile(fullPath);
-		if (!levelFile.is_open())
+
+		ConfigReader levelReader;
+		if (!levelReader.ReadFile(fullPath.c_str()))
 			return false;
-
-
-		/**
-		* Parse level config file.
-		* TODO: MOVE TO A HELPER CLASS - so we can re-use this for other config files
-		*/
-		std::string currLine;
-		std::string currSection;
-		std::unordered_map<std::string, std::unordered_map<std::string, std::string>> sectionVarMap;
-		while (std::getline(levelFile, currLine))
-		{
-			const char* cstrPtr = currLine.c_str();
-			const size_t& len = currLine.size();
-			size_t iLeft = 0;
-			size_t iRight = 0;
-			bool isSection = false;
-			bool isVariableAssignment = false;
-			std::string currVarName;
-			while (iRight < len)
-			{
-				const char* currChar = cstrPtr + iRight;
-				if (isSection)
-				{
-					if (*currChar == ']')
-					{
-						currSection = currLine.substr(iLeft, iRight - iLeft);
-						break;
-					}
-				}
-				else
-				{
-					if (*currChar == '[')
-					{
-						isSection = true;
-						iLeft = iRight + 1;
-					}
-					if (*currChar == ':')
-					{
-						isVariableAssignment = true;
-						currVarName = currLine.substr(iLeft, iRight - iLeft);
-						iLeft = iRight + 1;
-					}
-				}
-
-				iRight++;
-			}
-
-			if (isVariableAssignment && iLeft < iRight)
-			{
-				std::string varValue = currLine.substr(iLeft, 1 + iRight - iLeft);
-				sectionVarMap[currSection][currVarName] = varValue;
-			}
-		}
-
 
 		std::string wallMapName;
 		std::string floorMapName;
@@ -91,40 +38,16 @@ namespace Retro3D
 		int dimX = 0;
 		int dimY = 0;
 
-		/*** TODO: Create a config file parser, with functions to get variable values as specified type ***/
-		auto levelSectionIter = sectionVarMap.find("level");
-		if (levelSectionIter != sectionVarMap.end())
+		levelReader.GetString("level", "map_wall", wallMapName);
+		levelReader.GetString("level", "map_floor", floorMapName);
+		levelReader.GetString("level", "map_ceiling", ceilingMapName);
+		levelReader.GetInt("level", "dim_x", dimX);
+		levelReader.GetInt("level", "dim_x", dimY);
+
+		auto textureMap = levelReader.GetSectionAsMap("textures");
+		for (auto texturePtr : textureMap)
 		{
-			const std::unordered_map<std::string, std::string> levelSectionVarMap = (*levelSectionIter).second;
-			auto wallMapVarIter = levelSectionVarMap.find("map_wall");
-			if (wallMapVarIter != levelSectionVarMap.end())
-			{
-				wallMapName = (*wallMapVarIter).second;
-			}
-			auto dimXVarIter = levelSectionVarMap.find("dim_x");
-			if (dimXVarIter != levelSectionVarMap.end())
-			{
-				std::string strDimX = (*dimXVarIter).second;
-				try
-				{
-					dimX = std::atoi(strDimX.c_str());
-				}
-				catch (std::invalid_argument ex){}
-			}
-			auto dimYVarIter = levelSectionVarMap.find("dim_y");
-			if (dimYVarIter != levelSectionVarMap.end())
-			{
-				std::string strDimY = (*dimYVarIter).second;
-				try
-				{
-					dimY = std::atoi(strDimY.c_str());
-				}
-				catch (std::invalid_argument ex) {}
-			}
-		}
-		else
-		{
-			return false;
+
 		}
 
 		// set map dimension

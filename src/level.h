@@ -1,7 +1,7 @@
 #ifndef RETRO3D_LEVEL_H
 #define RETRO3D_LEVEL_H
 
-#include "level.h"
+#include "config_reader.h"
 
 #include <vector>
 
