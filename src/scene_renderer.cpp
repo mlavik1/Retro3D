@@ -10,30 +10,7 @@
 #include "window.h"
 #include "input_manager.h"
 #include "level.h"
-
-
-/* BEGIN: TEMP FOR TESTING */
-//#define MAP_DIM_X 15
-//#define MAP_DIM_Y 15
-
-/*
-int map[MAP_DIM_Y][MAP_DIM_X] = {
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 1,1,0,1,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 1,0,0,1,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 1,0,1,1,1,0,0,0,0,1,1,1,1,1,1 },
-	{ 1,0,0,0,1,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,1,1,0,1,0,0,0,0,0,0,0,0,0,1 },
-	{ 1,1,1,0,1,1,1,1,1,1,0,0,0,0,1 },
-	{ 1,0,0,0,0,0,0,0,0,1,0,0,0,0,1 },
-	{ 1,0,1,1,1,1,1,0,0,1,0,0,0,0,0 },
-	{ 1,0,1,0,0,0,0,0,0,1,0,0,0,0,0 },
-	{ 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,0 }
-};*/
+#include "st_assert.h"
 
 float fov = 60;
 float camWidth = 0.2f;
@@ -43,10 +20,6 @@ glm::mat4 camRot;
 const int texWidth = 800;
 const int texHeight = 600;
 SDL_Texture* renderTexture;
-
-SDL_Surface* wallTextureSurface;
-SDL_Surface* ceilingTextureSurface;
-SDL_Surface* floorTextureSurface;
 
 std::vector<unsigned char> pixels;
 std::vector<unsigned char> clearPixels;
@@ -72,11 +45,6 @@ namespace Retro3D
 		}
 		pixels = clearPixels; // pixel array containing the rendered scene
 
-														 /*** Textures for wall/ceiling/floor ***/
-		wallTextureSurface = IMG_Load("resources\\textures\\wall1.png");
-		ceilingTextureSurface = IMG_Load("resources\\textures\\test2.png");
-		floorTextureSurface = IMG_Load("resources\\textures\\floor1.png");
-
 		/*** Position the camera ***/
 		camPos = glm::vec3(2.0f, 1.0f, 0.5f);
 		camRot = glm::mat4(1.0f);
@@ -86,12 +54,24 @@ namespace Retro3D
 	{
 	}
 
+
+	void SceneRenderer::SetLevel(Level* arg_level)
+	{
+		mLevel = arg_level;
+		for (auto textureKeyPair : mLevel->GetTextureMap())
+		{
+			std::string fullPath = std::string("resources\\textures\\") + textureKeyPair.second;
+			SDL_Surface* surface = IMG_Load(fullPath.c_str());
+			__AssertComment(surface != nullptr, std::string("Unable to load texture: " + fullPath)); // todo
+			mTextureSurfaceMap[textureKeyPair.first] = surface;
+		}
+	}
+
 	void SceneRenderer::RenderScene()
 	{
 		const Uint64 start = SDL_GetPerformanceCounter();
 
-
-		Level* currentLevel = GGameEngine->GetCurrentLevel();
+		__Assert(mLevel != nullptr);
 
 
 		/*** Camera space ***/
@@ -126,7 +106,7 @@ namespace Retro3D
 			float tNextYIntersect = fabsf(rayDir.y) < 0.0001f ? 99999.0f : ((rayDir.y > 0 ? floorf(currPos.y + 1.0f) : floorf(currPos.y)) - currPos.y) / rayDir.y;; // t at next intersection point with Y-axis
 			bool xAxisInters;
 
-			int gridCellValue = 0; // hti result (0 == nothing)
+			char gridCellValue = 0; // hti result (0 == nothing)
 
 								   /*** Jump to nearest grid cell intersection (inters. with x-axis or y-axis) something is hit ***/
 			while (t < 100.0f)
@@ -150,10 +130,10 @@ namespace Retro3D
 				const int gridY = floorf(currPos.y);
 
 				// check new grid cell:
-				if (gridY >= currentLevel->GetDimensionY() || gridX >= currentLevel->GetDimensionX() || gridY < 0 || gridX < 0)
+				if (gridY >= mLevel->GetDimensionY() || gridX >= mLevel->GetDimensionX() || gridY < 0 || gridX < 0)
 					break;
 
-				gridCellValue = currentLevel->GetWallMapCell(gridX, gridY);
+				gridCellValue = mLevel->GetWallMapCell(gridX, gridY);
 				if (gridCellValue != 0) // hit something!
 				{
 					break;
@@ -166,25 +146,30 @@ namespace Retro3D
 			const int heightScreenSpace = height * texHeight;
 			const int pixelsToSkip = texHeight - heightScreenSpace;
 
-			/*** Draw wall ***/
-			for (int z = fmaxf(pixelsToSkip / 2, 0); z < texHeight - pixelsToSkip / 2; z++)
+			if (gridCellValue != 0)
 			{
-				const int offset = (texWidth * 4 * z) + x * 4;
-				if (offset + 3 >= pixels.size())
-					break; // TODO
+				/*** Draw wall ***/
+				for (int z = fmaxf(pixelsToSkip / 2, 0); z < texHeight - pixelsToSkip / 2; z++)
+				{
+					const int offset = (texWidth * 4 * z) + x * 4;
+					if (offset + 3 >= pixels.size())
+						break; // TODO
 
-				const float realZ = 1.0f - ((float)(z - pixelsToSkip / 2) / heightScreenSpace);
-				const int gridX = floorf(currPos.x);
-				const int gridY = floorf(currPos.y);
-				const glm::vec2 uv = xAxisInters ? glm::vec2(currPos.y - gridY, 1.0f - realZ) : glm::vec2(currPos.x - gridX, 1.0f - realZ);
-				const Uint32 pixelColour = getpixel(wallTextureSurface, uv.x * wallTextureSurface->w, uv.y * wallTextureSurface->h);
-				const Uint8 r = pixelColour;
-				const Uint8 g = *(((Uint8*)&pixelColour) + 1);
-				const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
+					const SDL_Surface* wallTextureSurface = mTextureSurfaceMap[gridCellValue];
 
-				pixels[offset + 0] = b;
-				pixels[offset + 1] = g;
-				pixels[offset + 2] = r;
+					const float realZ = 1.0f - ((float)(z - pixelsToSkip / 2) / heightScreenSpace);
+					const int gridX = floorf(currPos.x);
+					const int gridY = floorf(currPos.y);
+					const glm::vec2 uv = xAxisInters ? glm::vec2(currPos.y - gridY, 1.0f - realZ) : glm::vec2(currPos.x - gridX, 1.0f - realZ);
+					const Uint32 pixelColour = getpixel(wallTextureSurface, uv.x * wallTextureSurface->w, uv.y * wallTextureSurface->h);
+					const Uint8 r = pixelColour;
+					const Uint8 g = *(((Uint8*)&pixelColour) + 1);
+					const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
+
+					pixels[offset + 0] = b;
+					pixels[offset + 1] = g;
+					pixels[offset + 2] = r;
+				}
 			}
 
 			/*** Draww ceiling ***/
@@ -202,9 +187,13 @@ namespace Retro3D
 				if (offset + 3 >= pixels.size())
 					break; // TODO
 
-
 				const int gridX = floorf(roofHit.x);
 				const int gridY = floorf(roofHit.y);
+				const char& ceilingTextureKey = mLevel->GetCeilingMapCell(gridX, gridY);
+				if (ceilingTextureKey == 0)
+					continue;
+
+				const SDL_Surface* ceilingTextureSurface = mTextureSurfaceMap[ceilingTextureKey];
 				const glm::vec2 uv(roofHit.x - gridX, roofHit.y - gridY);
 				const Uint32 pixelColour = getpixel(ceilingTextureSurface, uv.x * ceilingTextureSurface->w, uv.y * ceilingTextureSurface->h);
 				const Uint8 r = pixelColour;
@@ -233,6 +222,11 @@ namespace Retro3D
 
 				const int gridX = floorf(floorHit.x);
 				const int gridY = floorf(floorHit.y);
+				const char& floorTextureKey = mLevel->GetFloorMapCell(gridX, gridY);
+				if (floorTextureKey == 0)
+					continue;
+
+				const SDL_Surface* floorTextureSurface = mTextureSurfaceMap[floorTextureKey];
 				const glm::vec2 uv(floorHit.x - gridX, floorHit.y - gridY);
 				const Uint32 pixelColour = getpixel(floorTextureSurface, uv.x * floorTextureSurface->w, uv.y * floorTextureSurface->h);
 				const Uint8 r = pixelColour;

@@ -18,9 +18,11 @@ namespace Retro3D
 		int mDimX;
 		int mDimY;
 
-		std::vector<int> mWallMap;
-		std::vector<int> mCeilingMap;
-		std::vector<int> mFloorMap;
+		std::vector<char> mWallMap;
+		std::vector<char> mCeilingMap;
+		std::vector<char> mFloorMap;
+
+		std::unordered_map<char, std::string> mTextureMap;
 
 		void setDimension(int arg_x, int arg_y);
 		bool loadMap(const char* arg_filename, MapType arg_type);
@@ -37,9 +39,21 @@ namespace Retro3D
 			const int& index = GetMapIndex(arg_x, arg_y);
 			return mWallMap[index];
 		}
+		inline const int& GetFloorMapCell(const int arg_x, const int arg_y) const
+		{
+			const int& index = GetMapIndex(arg_x, arg_y);
+			return mFloorMap[index];
+		}
+		inline const int& GetCeilingMapCell(const int arg_x, const int arg_y) const
+		{
+			const int& index = GetMapIndex(arg_x, arg_y);
+			return mCeilingMap[index];
+		}
 
-		inline const int& GetDimensionX() { return mDimX; }
-		inline const int& GetDimensionY() { return mDimY; }
+		inline const char& GetDimensionX() { return mDimX; }
+		inline const char& GetDimensionY() { return mDimY; }
+
+		inline const std::unordered_map<char, std::string> GetTextureMap() { return mTextureMap; }
 
 	};
 }

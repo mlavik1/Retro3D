@@ -20,6 +20,7 @@ int main(int argc, char** argv)
 	GameEngine* engine = GameEngine::CreateGameEngine();
 
 	GGameEngine->GetCurrentLevel()->LoadLevel("level1");
+	engine->GetSceneRenderer()->SetLevel(GGameEngine->GetCurrentLevel()); // todo: do in engine
 
 	while (true)
 	{

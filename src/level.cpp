@@ -47,7 +47,8 @@ namespace Retro3D
 		auto textureMap = levelReader.GetSectionAsMap("textures");
 		for (auto texturePtr : textureMap)
 		{
-
+			char key = texturePtr.first.c_str()[0];
+			mTextureMap[key] = texturePtr.second;
 		}
 
 		// set map dimension
@@ -58,6 +59,10 @@ namespace Retro3D
 
 		if (wallMapName != "")
 			loadMap(wallMapName.c_str(), MapType::WallMap);
+		if (floorMapName != "")
+			loadMap(floorMapName.c_str(), MapType::FloorMap);
+		if (ceilingMapName != "")
+			loadMap(ceilingMapName.c_str(), MapType::CeilingMap);
 
 		return true;
 	}
@@ -65,7 +70,7 @@ namespace Retro3D
 
 	bool Level::loadMap(const char* arg_filename, MapType arg_type)
 	{
-		std::vector<int>* mapArray = nullptr;
+		std::vector<char>* mapArray = nullptr;
 		switch (arg_type)
 		{
 		case Retro3D::WallMap:
@@ -102,8 +107,10 @@ namespace Retro3D
 				{
 					LOG_INFO() << "";
 					__AssertComment(i_x < mDimX && i_y < mDimY, "Invalid map file");
-					int cellValue = std::atoi(currCell.c_str());
+					char cellValue = currCell.c_str()[0];
 					const int& mapIndex = GetMapIndex(i_x, i_y);
+					if (mTextureMap.find(cellValue) == mTextureMap.end())
+						cellValue = 0;
 					(*mapArray)[mapIndex] = cellValue;
 					i_x++;
 				}
