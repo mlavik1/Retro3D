@@ -28,25 +28,27 @@ namespace Retro3D
 			const glm::vec3 camForward = camRot * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 			const glm::vec3 camRight = camRot * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 
-			const float movementSpeed = deltaSeconds * 3.0f;
+			const float movementSpeed = deltaSeconds * 2.5f;
 
 			InputManager* inputManager = GGameEngine->GetInputManager();
 
+			glm::vec3 moveDist(0.0f, 0.0f, 0.0f);
+
 			if (inputManager->GetKey("w"))
 			{
-				camPos += camForward * movementSpeed;
+				moveDist = camForward;
 			}
 			if (inputManager->GetKey("s"))
 			{
-				camPos -= camForward * movementSpeed;
+				moveDist = camForward * -1.0f;
 			}
 			if (inputManager->GetKey("d"))
 			{
-				camPos += camRight * movementSpeed;
+				moveDist = camRight;
 			}
 			if (inputManager->GetKey("a"))
 			{
-				camPos -= camRight * movementSpeed;
+				moveDist = camRight * -1.0f;
 			}
 			if (inputManager->GetKey("e"))
 			{
@@ -56,6 +58,10 @@ namespace Retro3D
 			{
 				camRot *= glm::rotate(movementSpeed, glm::vec3(0.0f, 0.0f, 1.0f));
 			}
+
+			const float len = glm::length(moveDist);
+			if(len > 0.0f)
+				camPos += glm::normalize(moveDist) * movementSpeed;
 
 			mPlayer->GetTransform().SetPosition(camPos);
 			mPlayer->GetTransform().SetRotation(camRot);

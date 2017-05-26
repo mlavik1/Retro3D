@@ -11,6 +11,8 @@ namespace Retro3D
 	private:
 		glm::vec3 mPositionOffset;
 		Transform mCameraTransform;
+		float mTOffset = 0.0f;
+		glm::vec3 mPrevPos;
 
 	public:
 		virtual void OnStart() override;
