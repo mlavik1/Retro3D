@@ -22,7 +22,7 @@ namespace Retro3D
 		mFloorMap.resize(arg_x * arg_y);
 		mCeilingMap.resize(arg_x * arg_y);
 	}
-
+	 
 	bool Level::LoadLevel(const char* arg_name)
 	{
 		std::string fullPath = std::string("resources//levels//") + std::string(arg_name) + std::string(".level");

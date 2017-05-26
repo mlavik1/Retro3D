@@ -11,11 +11,10 @@
 #include "input_manager.h"
 #include "level.h"
 #include "st_assert.h"
+#include "camera_component.h" // TEMP
 
 float fov = 60;
 float camWidth = 0.2f;
-glm::vec3 camPos;
-glm::mat4 camRot;
 
 const int texWidth = 800;
 const int texHeight = 600;
@@ -44,10 +43,6 @@ namespace Retro3D
 			clearPixels[i] = SDL_ALPHA_OPAQUE; // fill with 255, so we won't have to set the alpha when rendering
 		}
 		pixels = clearPixels; // pixel array containing the rendered scene
-
-		/*** Position the camera ***/
-		camPos = glm::vec3(2.0f, 1.0f, 0.5f);
-		camRot = glm::mat4(1.0f);
 	}
 
 	SceneRenderer::~SceneRenderer()
@@ -72,11 +67,22 @@ namespace Retro3D
 		}
 	}
 
+	void SceneRenderer::SetCameraComponent(CameraComponent* arg_comp)
+	{
+		mCameraComponent = arg_comp;
+	}
+
 	void SceneRenderer::RenderScene()
 	{
-		const Uint64 start = SDL_GetPerformanceCounter();
-
 		__Assert(mLevel != nullptr);
+
+		glm::vec3 camPos;
+		glm::mat4 camRot;
+		if (mCameraComponent.IsValid()) // TEMP!
+		{
+			camPos = mCameraComponent->GetCameraTransform().GetPosition();
+			camRot = mCameraComponent->GetCameraTransform().GetRotation();
+		}
 
 		const std::string& skyboxTexture = mLevel->GetSkyboxTexture();
 		bool renderSkybox = skyboxTexture != "";
@@ -279,45 +285,6 @@ namespace Retro3D
 
 		pixels = clearPixels; // TODO
 
-		const Uint64 end = SDL_GetPerformanceCounter();
-		const static Uint64 freq = SDL_GetPerformanceFrequency();
-		const float deltaSeconds = (end - start) / static_cast< float >(freq);
-		std::cout << "Frame time: " << deltaSeconds * 1000.0 << "ms" << std::endl;
-
-		/*** Handle keyboard input ***/
-		{
-			const glm::vec3 camForward = camRot * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-			const glm::vec3 camRight = camRot * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-
-			const float movementSpeed = deltaSeconds * 2.0f;
-
-			InputManager* inputManager = GGameEngine->GetInputManager();
-
-			if (inputManager->GetKey("w"))
-			{
-				camPos += camForward * movementSpeed;
-			}
-			if (inputManager->GetKey("s"))
-			{
-				camPos -= camForward * movementSpeed;
-			}
-			if (inputManager->GetKey("d"))
-			{
-				camPos += camRight * movementSpeed;
-			}
-			if (inputManager->GetKey("a"))
-			{
-				camPos -= camRight * movementSpeed;
-			}
-			if (inputManager->GetKey("e"))
-			{
-				camRot *= glm::rotate(-movementSpeed, glm::vec3(0.0f, 0.0f, 1.0f));
-			}
-			if (inputManager->GetKey("q"))
-			{
-				camRot *= glm::rotate(movementSpeed, glm::vec3(0.0f, 0.0f, 1.0f));
-			}
-		}
 	}
 
 
