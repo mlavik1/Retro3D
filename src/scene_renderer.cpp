@@ -13,7 +13,7 @@
 #include "st_assert.h"
 #include "camera_component.h" // TEMP
 
-float fov = 60;
+//float fov = 90; // TODO
 float camWidth = 0.2f;
 
 const int texWidth = 800;
@@ -100,7 +100,7 @@ namespace Retro3D
 		const glm::vec3 screenCentreWorld = camPos + camForward * d; // centre of the screen of the camera
 
 		/*** Trace in 2D, for each x ***/
-		//#pragma omp parallel for // ENABLE FOR PERFORMANCE GAIN!
+		#pragma omp parallel for // enable for better performance
 		for (int x = 0; x < texWidth; x++)
 		{
 			const float relX = (float)x / texWidth;

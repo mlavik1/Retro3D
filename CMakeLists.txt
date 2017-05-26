@@ -18,6 +18,12 @@ add_executable(Retro3D ${SOURCES})
 
 SET(LIB_DIR "${CMAKE_SOURCE_DIR}/libraries/Windows/x86")
 
+find_package(OpenMP)
+if (OPENMP_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
+
 TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2_image.lib)
 TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2main.lib)
 TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2.lib)
