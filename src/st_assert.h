@@ -1,20 +1,28 @@
 #ifndef HIKARI_ASSERT_H
 #define HIKARI_Assert_H
 
+#ifdef _WIN32
+#define __DebugBreakImpl __debugbreak()
+#else
+#define __DebugBreakImpl
+#endif
+
 #include <assert.h>
 #include "debug.h"
+#ifdef _WIN32
 #include <intrin.h>
+#endif
 
 #define __Assert(expr) \
 	if(!(expr)) { \
 		LOG_ERROR() << "Assertion error on " << #expr; \
-		__debugbreak(); \
+		__DebugBreakImpl; \
 	}
 
 #define __AssertComment(expr, comment) \
 	if(!(expr)) { \
 		LOG_ERROR() << "Assertion error on " << #expr << ", \"" << comment << "\""; \
-	__debugbreak(); \
+		__DebugBreakImpl; \
 	}
 	
 

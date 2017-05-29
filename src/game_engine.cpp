@@ -28,18 +28,22 @@ namespace Retro3D
 
 	GameEngine* GameEngine::CreateGameEngine()
 	{
+		LOG_INFO() << "Creating game engine";
 		GGameEngine = new GameEngine();
 		return GGameEngine;
 	}
 
 	void GameEngine::StartEngine()
 	{
+		LOG_INFO() << "Starting game engine";
 		mPlayerController->OnStart();
 
 		for (const ObjectPtr<Actor> actor : mWorld->GetActors())
 		{
 			actor->OnStart();
 		}
+
+		LOG_INFO() << "Entering main loop";
 
 		float deltaTime = 0.1f;
 

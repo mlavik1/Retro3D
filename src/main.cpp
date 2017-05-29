@@ -18,10 +18,13 @@
 #include "player_controller.h"
 #include "world.h"
 
+
 #undef main // TEMP - TODO
 
 int main(int argc, char** argv)
 {
+	LOG_INFO() << "starting from main";
+
 	using namespace Retro3D;
 
 	GameEngine* engine = GameEngine::CreateGameEngine();

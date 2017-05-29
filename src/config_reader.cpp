@@ -11,7 +11,7 @@ namespace Retro3D
 		std::ifstream configFile(arg_filepath);
 		if (!configFile.is_open())
 			return false;
-
+		
 		/**
 		* Parse config file.
 		*/
@@ -54,6 +54,7 @@ namespace Retro3D
 
 				iRight++;
 			}
+			iRight--; // TODO: if end of line, iRight will need to be incremented
 
 			if (isVariableAssignment && iLeft < iRight)
 			{
@@ -61,6 +62,8 @@ namespace Retro3D
 				mSectionVarMap[currSection][currVarName] = varValue;
 			}
 		}
+		configFile.close();
+		return true;
 	}
 
 	std::unordered_map<std::string, std::string> ConfigReader::GetSectionAsMap(const char* arg_section)

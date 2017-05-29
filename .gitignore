@@ -11,3 +11,8 @@ build
 CMakeFiles
 .vs
 CMake
+webbuild
+-p
+
+#files
+emcc_build.bat

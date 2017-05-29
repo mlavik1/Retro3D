@@ -25,13 +25,17 @@ namespace Retro3D
 	 
 	bool Level::LoadLevel(const char* arg_name)
 	{
+		LOG_INFO() << "Loading level: " << arg_name;
+
 		std::string fullPath = std::string("resources//levels//") + std::string(arg_name) + std::string(".level");
 
 
 		ConfigReader levelReader;
 		if (!levelReader.ReadFile(fullPath.c_str()))
+		{
+			LOG_ERROR() << "Failed to load leve: " << arg_name;
 			return false;
-
+		}
 		std::string wallMapName;
 		std::string floorMapName;
 		std::string ceilingMapName;
@@ -94,7 +98,10 @@ namespace Retro3D
 		std::string fullPath = std::string("resources//levels//") + std::string(arg_filename);
 		std::ifstream mapFIle(fullPath);
 		if (!mapFIle.is_open())
+		{
+			LOG_ERROR() << "ailed to load map: " << arg_filename;
 			return false;
+		}
 
 		int i_y = mDimY - 1;
 		std::string currLine;
