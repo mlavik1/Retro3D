@@ -29,11 +29,10 @@ namespace Retro3D
 
 		std::string fullPath = std::string("resources//levels//") + std::string(arg_name) + std::string(".level");
 
-
 		ConfigReader levelReader;
 		if (!levelReader.ReadFile(fullPath.c_str()))
 		{
-			LOG_ERROR() << "Failed to load leve: " << arg_name;
+			LOG_ERROR() << "Failed to load level: " << arg_name;
 			return false;
 		}
 		std::string wallMapName;
@@ -94,18 +93,18 @@ namespace Retro3D
 			return false;
 			break;
 		}
-
+		
 		std::string fullPath = std::string("resources//levels//") + std::string(arg_filename);
-		std::ifstream mapFIle(fullPath);
-		if (!mapFIle.is_open())
+		std::ifstream mapFile(fullPath.c_str());
+		if (!mapFile.is_open())
 		{
-			LOG_ERROR() << "ailed to load map: " << arg_filename;
+			LOG_ERROR() << "failed to load map: " << arg_filename;
 			return false;
 		}
 
 		int i_y = mDimY - 1;
 		std::string currLine;
-		while (std::getline(mapFIle, currLine))
+		while (std::getline(mapFile, currLine))
 		{
 			std::vector<std::string> cells;
 			std::stringstream ss;

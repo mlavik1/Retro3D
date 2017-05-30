@@ -21,6 +21,8 @@ namespace Retro3D
 		SceneRenderer* mSceneRenderer;
 		World* mWorld;
 		PlayerController* mPlayerController;
+		float mDeltaTime = 0.1f;
+		bool mIsRunning;
 
 		GameEngine();
 
@@ -29,6 +31,7 @@ namespace Retro3D
 
 	public:
 		void StartEngine();
+		void TickEngine();
 
 		void SetPlayerController(PlayerController* arg_controller) { mPlayerController = arg_controller; } // TODO
 

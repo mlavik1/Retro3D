@@ -10,6 +10,6 @@ os.chdir("src")
 for file in glob.glob("*.cpp"):
     f.write('src/' + file + " ")
 
-f.write('-I include -s WASM=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 --use-preload-plugins --preload-file resources -o webbuild/main.html --std=c++11')
+f.write('-I include -s WASM=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s ALLOW_MEMORY_GROWTH=1 --use-preload-plugins --preload-file resources -o webbuild/main.html --std=c++11')
 
 f.close() 

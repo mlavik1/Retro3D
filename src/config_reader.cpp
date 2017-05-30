@@ -50,6 +50,10 @@ namespace Retro3D
 						currVarName = currLine.substr(iLeft, iRight - iLeft);
 						iLeft = iRight + 1;
 					}
+					if (*currChar == '\n' || *currChar == '\r') // TODO: don't use std::getline()
+					{
+						break;
+					}
 				}
 
 				iRight++;

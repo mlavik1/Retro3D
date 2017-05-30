@@ -9,6 +9,10 @@
 #include "actor.h"
 #include "player_controller.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 namespace Retro3D
 {
 	GameEngine* GGameEngine = nullptr;
@@ -33,6 +37,13 @@ namespace Retro3D
 		return GGameEngine;
 	}
 
+#ifdef __EMSCRIPTEN__
+	void emscriptenMainLoop()
+	{
+		GGameEngine->TickEngine();
+	}
+#endif
+
 	void GameEngine::StartEngine()
 	{
 		LOG_INFO() << "Starting game engine";
@@ -45,29 +56,38 @@ namespace Retro3D
 
 		LOG_INFO() << "Entering main loop";
 
-		float deltaTime = 0.1f;
+		mIsRunning = true;
 
-		while (true) // TODO
+#ifdef __EMSCRIPTEN__
+		emscripten_set_main_loop(emscriptenMainLoop, 60, 1);
+#else
+		while (mIsRunning) // TODO
 		{
-			const Uint64 start = SDL_GetPerformanceCounter();
-
-
-			mInputManager->CaptureInput();
-
-			mPlayerController->OnTick(deltaTime);
-			for (const ObjectPtr<Actor> actor : mWorld->GetActors())
-			{
-				actor->OnTick(deltaTime);
-			}
-
-			mSceneRenderer->RenderScene();
-
-
-			const Uint64 end = SDL_GetPerformanceCounter();
-			const static Uint64 freq = SDL_GetPerformanceFrequency();
-			deltaTime = (end - start) / static_cast< float >(freq);
-			std::cout << "Frame time: " << deltaTime * 1000.0 << "ms" << std::endl;
+			TickEngine();
 		}
+#endif
+	}
+
+	void GameEngine::TickEngine()
+	{
+		const Uint64 start = SDL_GetPerformanceCounter();
+
+
+		mInputManager->CaptureInput();
+
+		mPlayerController->OnTick(mDeltaTime);
+		for (const ObjectPtr<Actor> actor : mWorld->GetActors())
+		{
+			actor->OnTick(mDeltaTime);
+		}
+
+		mSceneRenderer->RenderScene();
+
+
+		const Uint64 end = SDL_GetPerformanceCounter();
+		const static Uint64 freq = SDL_GetPerformanceFrequency();
+		mDeltaTime = (end - start) / static_cast< float >(freq);
+		//std::cout << "Frame time: " << mDeltaTime * 1000.0 << "ms" << std::endl;
 	}
 
 }
