@@ -13,7 +13,7 @@
 #include "st_assert.h"
 #include "camera_component.h" // TEMP
 
-//float fov = 90; // TODO
+float fov = 95; // TODO
 float camWidth = 0.2f;
 
 const int texWidth = 800;
@@ -90,7 +90,7 @@ namespace Retro3D
 		/*** Camera space ***/
 		const float camAspect = (float)texWidth / texHeight;
 		const float camHeight = camWidth / camAspect;
-		const float d = (camWidth / 2.0f) / tanf(camAspect / 2.0f); // distance from eye
+		const float d = (camWidth / 2.0f) / tanf(fov * 0.5f * 3.141592654 / 180.0f); // distance from eye
 		const glm::vec3 camForward = camRot * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 		const glm::vec3 camRight = camRot * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 		const glm::vec3 camUp = camRot * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
@@ -153,11 +153,22 @@ namespace Retro3D
 				}
 			}
 
+			const glm::vec3 currPosTop = glm::vec3(currPos.x, currPos.y, 1.0f);
+			const glm::vec3 dirToCurrPosTop = glm::normalize(currPosTop - camPos);
+			const float cosA = glm::dot(dirToCurrPosTop, camForward);
+			const float dDivCosA = d / cosA;
+			const glm::vec3 currPosTopProjCam = camPos + dirToCurrPosTop * dDivCosA;
+			const float halfHeight = currPosTopProjCam.z - camPos.z;
+			const float height = halfHeight * 2.0f;
+			const int heightScreenSpace = (height / camHeight) * texHeight;
+			const int pixelsToSkip = texHeight - heightScreenSpace;
+			/*
 			const float acosAngle = (glm::length(screenCentreWorld - camPos) / glm::length(pixelWorld - camPos));
 			const float dist = glm::length((currPos - rayStart)) * acosAngle; // fish-eye correction
 			const float height = 1.0f / dist; // TODO
 			const int heightScreenSpace = height * texHeight;
 			const int pixelsToSkip = texHeight - heightScreenSpace;
+			*/
 
 			if (gridCellValue != 0)
 			{
@@ -191,10 +202,10 @@ namespace Retro3D
 				const float relZ = (float)z / texHeight;
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)
 				const glm::vec3 pixelWorld2 = pixelWorld + viewZ * camUpScaled;
-				const glm::vec3 rayDir2 = glm::normalize(pixelWorld2 - camPos);
+				const glm::vec3 ceilRayDir = glm::normalize(pixelWorld2 - camPos);
 
-				const float tRoof = (1.0f - camPos.z) / rayDir2.z;
-				const glm::vec3 roofHit = camPos + rayDir2*tRoof;
+				const float tRoof = (1.0f - camPos.z) / ceilRayDir.z;
+				const glm::vec3 roofHit = camPos + ceilRayDir*tRoof;
 
 				const int offset = (texWidth * 4 * z) + x * 4;
 				if (offset + 3 >= pixels.size())
@@ -223,16 +234,17 @@ namespace Retro3D
 					else if (renderSkybox)
 					{
 						float tSkybox;
-						const bool xAxisSkyboxInters = fabsf(rayDir2.x) > fabsf(rayDir2.y);
+						const bool xAxisSkyboxInters = fabsf(ceilRayDir.x) > fabsf(ceilRayDir.y);
 						if (xAxisSkyboxInters)
-							tSkybox = (200.0f * (rayDir2.x > 0 ? 1.0f : -1.0f)) / rayDir2.x;
+							tSkybox = (200.0f * (ceilRayDir.x > 0 ? 1.0f : -1.0f)) / ceilRayDir.x;
 						else
-							tSkybox = (200.0f * (rayDir2.y > 0 ? 1.0f : -1.0f)) / rayDir2.y;
-						const glm::vec3 skyboxHit = camPos + rayDir2*tSkybox;
+							tSkybox = (200.0f * (ceilRayDir.y > 0 ? 1.0f : -1.0f)) / ceilRayDir.y;
+						const glm::vec3 skyboxHit = camPos + ceilRayDir*tSkybox;
 
 						const float u = !xAxisSkyboxInters ? (200.0f + skyboxHit.x - camPos.x) / 400.0f : (200.0f + skyboxHit.y - camPos.y) / 400.0f;
 						const float v = 1.0f - (200.0f + skyboxHit.z - camPos.z) / 400.0f; // TODO: inverted??
-						const glm::vec2 uv(u, v);
+						//const glm::vec2 uv(u, v - 1.0f*std::floorf(v)); // TODO
+						const glm::vec2 uv(((!xAxisSkyboxInters && ceilRayDir.y < 0.0f) || xAxisSkyboxInters && ceilRayDir.x < 0.0f) ? (1.0f - u) : u, std::fabsf(v));
 						const Uint32 pixelColour = getpixel(mSkyboxTexture, uv.x * mSkyboxTexture->w, uv.y * mSkyboxTexture->h);
 						const Uint8 r = pixelColour;
 						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
@@ -251,10 +263,10 @@ namespace Retro3D
 				const float relZ = (float)z / texHeight;
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)
 				const glm::vec3 pixelWorld2 = pixelWorld + viewZ * camUpScaled;
-				const glm::vec3 rayDir2 = glm::normalize(pixelWorld2 - camPos);
+				const glm::vec3 floorRayDir = glm::normalize(pixelWorld2 - camPos);
 
-				const float tFloor = (0.0f - camPos.z) / rayDir2.z;
-				const glm::vec3 floorHit = camPos + rayDir2*tFloor;
+				const float tFloor = (0.0f - camPos.z) / floorRayDir.z;
+				const glm::vec3 floorHit = camPos + floorRayDir*tFloor;
 
 				const int offset = (texWidth * 4 * z) + x * 4;
 				if (offset + 3 >= pixels.size())
