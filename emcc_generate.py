@@ -5,6 +5,7 @@ f = open('emcc_build.bat', 'w')
 f.write('mkdir -p webbuild\n')
 f.write('rm -r webbuild/*\n')
 f.write('emcc ')
+f.write('-O3 ')
 
 os.chdir("src")
 for file in glob.glob("*.cpp"):

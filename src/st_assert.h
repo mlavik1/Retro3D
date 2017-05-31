@@ -1,5 +1,5 @@
-#ifndef HIKARI_ASSERT_H
-#define HIKARI_Assert_H
+#ifndef RETRO3D_ASSERT_H
+#define RETRO3D_ASSERT_H
 
 #ifdef _WIN32
 #define __DebugBreakImpl __debugbreak()

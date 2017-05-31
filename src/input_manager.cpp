@@ -72,31 +72,40 @@ namespace Retro3D
 
 	bool InputManager::GetKey(const char* arg_key)
 	{
-		try {
-			InputMapKeyCode keyCode = mKeycodeMap.at(arg_key);
-			return mKeyPressedMap.at(keyCode);
+		auto itKeyCode = mKeycodeMap.find(arg_key);
+		if (itKeyCode != mKeycodeMap.end())
+		{
+			const InputMapKeyCode& keyCode = (*itKeyCode).second;
+			auto itKeyPress = mKeyPressedMap.find(keyCode);
+			if (itKeyPress != mKeyPressedMap.end())
+				return (*itKeyPress).second;
 		}
-		catch (const std::out_of_range& oor) {}
 		return false;
 	}
 
 	bool InputManager::GetKeyDown(const char* arg_key)
 	{
-		try {
-			InputMapKeyCode keyCode = mKeycodeMap.at(arg_key);
-			return mKeyUpMap.at(keyCode);
+		auto itKeyCode = mKeycodeMap.find(arg_key);
+		if (itKeyCode != mKeycodeMap.end())
+		{
+			const InputMapKeyCode& keyCode = (*itKeyCode).second;
+			auto itKeyDown = mKeyDownMap.find(keyCode);
+			if (itKeyDown != mKeyDownMap.end())
+				return (*itKeyDown).second;
 		}
-		catch (const std::out_of_range& oor) {}
 		return false;
 	}
 
 	bool InputManager::GetKeyUp(const char* arg_key)
 	{
-		try {
-			InputMapKeyCode keyCode = mKeycodeMap.at(arg_key);
-			return mKeyDownMap.at(keyCode);
+		auto itKeyCode = mKeycodeMap.find(arg_key);
+		if (itKeyCode != mKeycodeMap.end())
+		{
+			const InputMapKeyCode& keyCode = (*itKeyCode).second;
+			auto itKeyUp = mKeyUpMap.find(keyCode);
+			if (itKeyUp != mKeyUpMap.end())
+				return (*itKeyUp).second;
 		}
-		catch (const std::out_of_range& oor) {}
 		return false;
 	}
 

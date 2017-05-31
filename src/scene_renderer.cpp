@@ -11,6 +11,7 @@
 #include "input_manager.h"
 #include "level.h"
 #include "st_assert.h"
+#include <algorithm>
 #include "camera_component.h" // TEMP
 
 float fov = 95; // TODO
@@ -162,42 +163,38 @@ namespace Retro3D
 			const float height = halfHeight * 2.0f;
 			const int heightScreenSpace = (height / camHeight) * texHeight;
 			const int pixelsToSkip = texHeight - heightScreenSpace;
-			/*
-			const float acosAngle = (glm::length(screenCentreWorld - camPos) / glm::length(pixelWorld - camPos));
-			const float dist = glm::length((currPos - rayStart)) * acosAngle; // fish-eye correction
-			const float height = 1.0f / dist; // TODO
-			const int heightScreenSpace = height * texHeight;
-			const int pixelsToSkip = texHeight - heightScreenSpace;
-			*/
 
 			if (gridCellValue != 0)
 			{
-				/*** Draw wall ***/
-				for (int z = fmaxf(pixelsToSkip / 2, 0); z < texHeight - pixelsToSkip / 2; z++)
+				const SDL_Surface* wallTextureSurface = mTextureSurfaceMap[gridCellValue];
+				const int gridX = floorf(currPos.x);
+				const int gridY = floorf(currPos.y);
+				
+				if (mLevel->IsInGrid(gridX, gridY))
 				{
-					const int offset = (texWidth * 4 * z) + x * 4;
-					if (offset + 3 >= pixels.size())
-						break; // TODO
+					/*** Draw wall ***/
+					const int zMax = std::min(texHeight - pixelsToSkip / 2, texHeight);
+					for (int z = fmaxf(pixelsToSkip / 2, 0); z < zMax; z++)
+					{
+						const int offset = (texWidth * 4 * z) + x * 4;
 
-					const SDL_Surface* wallTextureSurface = mTextureSurfaceMap[gridCellValue];
+						const float realZ = 1.0f - ((float)(z - pixelsToSkip / 2) / heightScreenSpace);
+						const glm::vec2 uv = xAxisInters ? glm::vec2(currPos.y - gridY, 1.0f - realZ) : glm::vec2(currPos.x - gridX, 1.0f - realZ);
+						const Uint32 pixelColour = getpixel(wallTextureSurface, uv.x * wallTextureSurface->w, uv.y * wallTextureSurface->h);
+						const Uint8 r = pixelColour;
+						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
+						const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
 
-					const float realZ = 1.0f - ((float)(z - pixelsToSkip / 2) / heightScreenSpace);
-					const int gridX = floorf(currPos.x);
-					const int gridY = floorf(currPos.y);
-					const glm::vec2 uv = xAxisInters ? glm::vec2(currPos.y - gridY, 1.0f - realZ) : glm::vec2(currPos.x - gridX, 1.0f - realZ);
-					const Uint32 pixelColour = getpixel(wallTextureSurface, uv.x * wallTextureSurface->w, uv.y * wallTextureSurface->h);
-					const Uint8 r = pixelColour;
-					const Uint8 g = *(((Uint8*)&pixelColour) + 1);
-					const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
-
-					pixels[offset + 0] = b;
-					pixels[offset + 1] = g;
-					pixels[offset + 2] = r;
+						pixels[offset + 0] = b;
+						pixels[offset + 1] = g;
+						pixels[offset + 2] = r;
+					}
 				}
 			}
-
+			
 			/*** Draww ceiling ***/
-			for (int z = 0; z < pixelsToSkip / 2; z++)
+			const int zMax = std::min(pixelsToSkip / 2, texHeight);
+			for (int z = 0; z < zMax; z++)
 			{
 				const float relZ = (float)z / texHeight;
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)
@@ -208,8 +205,6 @@ namespace Retro3D
 				const glm::vec3 roofHit = camPos + ceilRayDir*tRoof;
 
 				const int offset = (texWidth * 4 * z) + x * 4;
-				if (offset + 3 >= pixels.size())
-					break; // TODO
 
 				const int gridX = floorf(roofHit.x);
 				const int gridY = floorf(roofHit.y);
@@ -269,8 +264,6 @@ namespace Retro3D
 				const glm::vec3 floorHit = camPos + floorRayDir*tFloor;
 
 				const int offset = (texWidth * 4 * z) + x * 4;
-				if (offset + 3 >= pixels.size())
-					break; // TODO
 
 				const int gridX = floorf(floorHit.x);
 				const int gridY = floorf(floorHit.y);
