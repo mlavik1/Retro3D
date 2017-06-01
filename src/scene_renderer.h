@@ -28,6 +28,7 @@ namespace Retro3D
 		std::unordered_map<char, SDL_Surface*> mTextureSurfaceMap;
 		SDL_Surface* mSkyboxTexture = nullptr;
 		ObjectPtr<CameraComponent> mCameraComponent; // TODO: pass on some other structure
+		float mFOV = 95;
 	};
 }
 

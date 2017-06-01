@@ -14,7 +14,6 @@
 #include <algorithm>
 #include "camera_component.h" // TEMP
 
-float fov = 95; // TODO
 float camWidth = 0.2f;
 
 const int texWidth = 800;
@@ -66,6 +65,13 @@ namespace Retro3D
 			mSkyboxTexture = IMG_Load((std::string("resources//textures//") + mLevel->GetSkyboxTexture()).c_str());
 			__Assert(mSkyboxTexture != nullptr);
 		}
+
+		float newFov;
+		if (GGameEngine->GetGameConfig().GetFloat("camera", "fov", newFov))
+		{
+			mFOV = newFov;
+		}
+		
 	}
 
 	void SceneRenderer::SetCameraComponent(CameraComponent* arg_comp)
@@ -91,7 +97,7 @@ namespace Retro3D
 		/*** Camera space ***/
 		const float camAspect = (float)texWidth / texHeight;
 		const float camHeight = camWidth / camAspect;
-		const float d = (camWidth / 2.0f) / tanf(fov * 0.5f * 3.141592654 / 180.0f); // distance from eye
+		const float d = (camWidth / 2.0f) / tanf(mFOV * 0.5f * 3.141592654 / 180.0f); // distance from eye
 		const glm::vec3 camForward = camRot * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 		const glm::vec3 camRight = camRot * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 		const glm::vec3 camUp = camRot * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);

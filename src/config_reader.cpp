@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include "st_assert.h"
+#include "string_helper.h"
 
 namespace Retro3D
 {
@@ -79,7 +80,7 @@ namespace Retro3D
 			return std::unordered_map<std::string, std::string>();
 	}
 
-	bool ConfigReader::GetString(const char* arg_section, const char* arg_variable, std::string& out_value)
+	bool ConfigReader::GetString(const char* arg_section, const char* arg_variable, std::string& out_value) const
 	{
 		auto sectionIter = mSectionVarMap.find(arg_section);
 		if (sectionIter != mSectionVarMap.end())
@@ -94,7 +95,7 @@ namespace Retro3D
 		return false;
 	}
 
-	bool ConfigReader::GetInt(const char* arg_section, const char* arg_variable, int& out_value)
+	bool ConfigReader::GetInt(const char* arg_section, const char* arg_variable, int& out_value) const
 	{
 		auto sectionIter = mSectionVarMap.find(arg_section);
 		if (sectionIter != mSectionVarMap.end())
@@ -103,14 +104,25 @@ namespace Retro3D
 			if (varIter != (*sectionIter).second.end())
 			{
 				const std::string& varStr = (*varIter).second;
-				try
-				{
-					out_value = std::atoi(varStr.c_str());
-					return true;
-				}
-				catch (std::invalid_argument ex) {}
+				return StringHelper::ToInt(varStr.c_str(), out_value);
 			}
 		}
 		return false;
 	}
+
+	bool ConfigReader::GetFloat(const char* arg_section, const char* arg_variable, float& out_value) const
+	{
+		auto sectionIter = mSectionVarMap.find(arg_section);
+		if (sectionIter != mSectionVarMap.end())
+		{
+			auto varIter = (*sectionIter).second.find(arg_variable);
+			if (varIter != (*sectionIter).second.end())
+			{
+				const std::string& varStr = (*varIter).second;
+				return StringHelper::ToFloat(varStr.c_str(), out_value);
+			}
+		}
+		return false;
+	}
+
 }

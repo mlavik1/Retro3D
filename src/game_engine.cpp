@@ -28,6 +28,8 @@ namespace Retro3D
 		mWorld = new World();
 		mCurrentLevel = new Level();
 		mPlayerController = new PlayerController();
+		if (!mGameConfig.ReadFile("resources//config//GameConfig.ini"))
+			LOG_ERROR() << "Failed to read config game file: ";
 	}
 
 	GameEngine* GameEngine::CreateGameEngine()
@@ -87,7 +89,7 @@ namespace Retro3D
 		const Uint64 end = SDL_GetPerformanceCounter();
 		const static Uint64 freq = SDL_GetPerformanceFrequency();
 		mDeltaTime = (end - start) / static_cast< float >(freq);
-		//std::cout << "Frame time: " << mDeltaTime * 1000.0 << "ms" << std::endl;
+		std::cout << "Frame time: " << mDeltaTime * 1000.0 << "ms" << std::endl;
 	}
 
 }

@@ -2,6 +2,7 @@
 #define RETRO3D_GAMEENGINE_H
 
 #include "objectptr.h"
+#include "config_reader.h"
 
 namespace Retro3D
 {
@@ -23,6 +24,7 @@ namespace Retro3D
 		PlayerController* mPlayerController;
 		float mDeltaTime = 0.1f;
 		bool mIsRunning;
+		ConfigReader mGameConfig;
 
 		GameEngine();
 
@@ -42,6 +44,7 @@ namespace Retro3D
 		inline SceneRenderer* GetSceneRenderer() { return mSceneRenderer; }
 		inline World* GetWorld() { return mWorld; }
 		inline PlayerController* GetPlayerController() { return mPlayerController; }
+		inline ConfigReader& GetGameConfig() { return mGameConfig; }
 	};
 }
 

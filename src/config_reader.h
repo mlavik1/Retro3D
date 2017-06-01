@@ -14,8 +14,9 @@ namespace Retro3D
 	public:
 		bool ReadFile(const char* arg_filepath);
 		std::unordered_map<std::string, std::string> GetSectionAsMap(const char* arg_section);
-		bool GetString(const char* arg_section, const char* arg_variable, std::string& out_value);
-		bool GetInt(const char* arg_section, const char* arg_variable, int& out_value);
+		bool GetString(const char* arg_section, const char* arg_variable, std::string& out_value) const;
+		bool GetInt(const char* arg_section, const char* arg_variable, int& out_value) const;
+		bool GetFloat(const char* arg_section, const char* arg_variable, float& out_value) const;
 	};
 }
 
