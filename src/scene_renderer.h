@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <unordered_map>
 #include "objectptr.h"
+#include "texture.h"
+#include <glm/glm.hpp>
 
 class SDL_Surface;
 
@@ -29,6 +31,16 @@ namespace Retro3D
 		SDL_Surface* mSkyboxTexture = nullptr;
 		ObjectPtr<CameraComponent> mCameraComponent; // TODO: pass on some other structure
 		float mFOV = 95;
+	};
+
+	class SpriteRenderObject
+	{
+	public:
+		const glm::vec3 mPosition;
+		const Texture* mTexture;
+		SpriteRenderObject(const glm::vec3& arg_pos, const Retro3D::Texture* arg_texture)
+			: mPosition(arg_pos), mTexture(arg_texture) 
+		{ }
 	};
 }
 

@@ -1,6 +1,6 @@
 #include "player_controller.h"
-#include "input_manager.h"
 
+#include "input_manager.h"
 #include "game_engine.h"
 #include "player.h"
 

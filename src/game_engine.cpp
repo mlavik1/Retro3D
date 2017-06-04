@@ -8,6 +8,7 @@
 #include <sdl2/SDL.h>
 #include "actor.h"
 #include "player_controller.h"
+#include "world_messagebus.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -25,6 +26,7 @@ namespace Retro3D
 		mInputManager = new InputManager();
 		mWindow = new Window();
 		mSceneRenderer = new SceneRenderer();
+		mWorldMessageBus = new WorldMessageBus();
 		mWorld = new World();
 		mCurrentLevel = new Level();
 		mPlayerController = new PlayerController();
@@ -74,6 +76,8 @@ namespace Retro3D
 	{
 		const Uint64 start = SDL_GetPerformanceCounter();
 
+		mWorld->TickWorld(mDeltaTime);
+		mWorldMessageBus->Clear();
 
 		mInputManager->CaptureInput();
 
@@ -89,7 +93,7 @@ namespace Retro3D
 		const Uint64 end = SDL_GetPerformanceCounter();
 		const static Uint64 freq = SDL_GetPerformanceFrequency();
 		mDeltaTime = (end - start) / static_cast< float >(freq);
-		std::cout << "Frame time: " << mDeltaTime * 1000.0 << "ms" << std::endl;
+		//std::cout << "Frame time: " << mDeltaTime * 1000.0 << "ms" << std::endl;
 	}
 
 }

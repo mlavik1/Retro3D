@@ -8,6 +8,7 @@ namespace Retro3D
 {
 	class CameraComponent : public Component
 	{
+		DEFINE_CLASS(CameraComponent, Component)
 	private:
 		glm::vec3 mPositionOffset;
 		Transform mCameraTransform;
@@ -15,6 +16,7 @@ namespace Retro3D
 		glm::vec3 mPrevPos;
 
 	public:
+		CameraComponent();
 		virtual void OnStart() override;
 		virtual void OnTick(float arg_deltatime) override;
 

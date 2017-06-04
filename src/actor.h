@@ -19,6 +19,8 @@ namespace Retro3D
 		std::vector<Component*> mComponents; // TODO: RTTI
 
 	public:
+		Actor();
+		~Actor();
 		inline Transform& GetTransform() { return mTransform; }
 
 		void AddComponent(Component* comp);

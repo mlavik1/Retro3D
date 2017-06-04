@@ -1,5 +1,5 @@
-#ifndef HIKARI_DEBUG_H
-#define HIKARI_DEBUG_H
+#ifndef RETRO3D_DEBUG_H
+#define RETRO3D_DEBUG_H
 
 #include <iostream>
 #include <sstream>

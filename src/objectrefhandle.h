@@ -6,8 +6,8 @@ A reference handle that contains:
 - raw pointer to a Retro3D::Object
 - reference count
 
-ObjectRefHandle should only belong to, and be instansiated by, a Hikari::Object.
-When the Hikari::Object is destroyed, the object pointer of the handle will be sett to nullptr.
+ObjectRefHandle should only belong to, and be instansiated by, a Retro3D::Object.
+When the Retro3D::Object is destroyed, the object pointer of the handle will be sett to nullptr.
 When the reference count is 0 and the object is destroyed, the ObjectRefHandle will be destroyed.
 
 ==============================================================================================*/

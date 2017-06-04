@@ -4,7 +4,6 @@
 #include "sdl2/SDL.h"
 #include "glm/glm.hpp"
 #include <unordered_map>
-#include <stdint.h>
 #include <string>
 
 namespace Retro3D

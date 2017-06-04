@@ -2,17 +2,18 @@
 
 #include <sdl2/SDL.h>
 #include <sdl2/SDL_image.h>
-#include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <vector>
-#include <iostream>
 #include "game_engine.h"
 #include "window.h"
-#include "input_manager.h"
 #include "level.h"
 #include "st_assert.h"
 #include <algorithm>
 #include "camera_component.h" // TEMP
+#include "sprite_component.h" // TEMP
+#include "world.h"
+#include <map>
+#include "actor.h"
 
 float camWidth = 0.2f;
 
@@ -94,7 +95,20 @@ namespace Retro3D
 		const std::string& skyboxTexture = mLevel->GetSkyboxTexture();
 		bool renderSkybox = skyboxTexture != "";
 
+		const std::vector<SpriteComponent*> spriteComps = GGameEngine->GetWorld()->GetComponentsOfType<SpriteComponent>();
+		std::multimap<float, SpriteRenderObject> renderObjects;
+		for (SpriteComponent* comp : spriteComps)
+		{
+			if (comp->GetVisibleTexture() != nullptr)
+			{
+				const glm::vec3 actorPos = comp->GetActor()->GetTransform().GetPosition();
+				const float dist = glm::length(actorPos - camPos);
+				renderObjects.emplace(dist, SpriteRenderObject(comp->GetActor()->GetTransform().GetPosition(), comp->GetVisibleTexture()));
+			}
+		}
+		
 		/*** Camera space ***/
+		const glm::mat4 invCamRot = glm::inverse(camRot);
 		const float camAspect = (float)texWidth / texHeight;
 		const float camHeight = camWidth / camAspect;
 		const float d = (camWidth / 2.0f) / tanf(mFOV * 0.5f * 3.141592654 / 180.0f); // distance from eye
@@ -198,7 +212,7 @@ namespace Retro3D
 				}
 			}
 			
-			/*** Draww ceiling ***/
+			/*** Draw ceiling ***/
 			const int zMax = std::min(pixelsToSkip / 2, texHeight);
 			for (int z = 0; z < zMax; z++)
 			{
@@ -289,6 +303,73 @@ namespace Retro3D
 				pixels[offset + 0] = b;
 				pixels[offset + 1] = g;
 				pixels[offset + 2] = r;
+			}
+		}
+
+		//LOG_INFO() << renderObjects.size();
+		/*** Render sprites ***/
+		for (auto pair : renderObjects)
+		{
+			const glm::vec3& spriteCentrePos = pair.second.mPosition;
+			const Texture& spriteTexture = *pair.second.mTexture;
+			const float spriteWidth = 1.0f;  // TODO
+			const float spriteHeight = 1.0f; // TODO
+			const glm::vec3 spriteLeftPos = spriteCentrePos - camRight * 0.5f;
+
+			// calculate sprite pos local to camera space
+			const glm::vec3 w1 = spriteCentrePos - screenCentreWorld;
+			const glm::vec3 w2 = spriteLeftPos - screenCentreWorld;
+			const glm::vec3 spriteCentreLocal = invCamRot * glm::vec4(w1.x, w1.y, w1.z, 0.0f);
+			const glm::vec3 spriteLeftLocal = invCamRot * glm::vec4(w2.x, w2.y, w2.z, 0.0f);
+
+			const glm::vec3 camPosLocal = glm::vec3(0.0f, 1.0f, 0.0f) * d * -1.0f;
+
+			const glm::vec3 u1 = camPosLocal - spriteCentreLocal;
+			const glm::vec3 u2 = camPosLocal - spriteLeftLocal;
+
+			// b + zt = 0  =>  t = -b / z
+			const float t1 = -1.0f * spriteCentreLocal.y / u1.y;
+			const float t2 = -1.0f * spriteLeftLocal.y / u2.y;
+			const glm::vec3 spriteCentreProj = spriteCentreLocal + u1 * t1;
+			const glm::vec3 spriteLeftProj = spriteLeftLocal + u2 * t2;
+
+			const float spriteWidthProj = fabsf(spriteCentreProj.x - spriteLeftProj.x);
+			const int screenWidth = (spriteWidthProj / camWidth) * texWidth;
+			const int spriteXOffset = (spriteCentreProj.x / camWidth) * texWidth;
+			const int spriteZOffset = (spriteLeftProj.z / camHeight) * texHeight;
+			const int startX = (texWidth / 2) + spriteXOffset - (screenWidth / 2);
+			const int endX = (texWidth / 2) + spriteXOffset + (screenWidth / 2);
+
+			if (endX >= 0 && startX < texWidth)
+			{ 
+				const float sizeRatio = spriteWidthProj / spriteWidth;
+				const float spriteHeightProj = sizeRatio * spriteHeight;
+				const int screenHeight = (spriteHeightProj / camHeight) * texHeight;
+				const int startZ = std::max(0, (texHeight / 2) + spriteZOffset - (screenHeight / 2));
+				const int endZ = std::min(texHeight - 1, (texHeight / 2) + spriteZOffset + (screenHeight / 2));
+
+				const int startX2 = std::max(startX, 0);
+				const int endX2 = std::min(endX, texWidth - 1);
+				for (int x = startX2; x < endX2; x++)
+				{
+					for (int z = startZ; z < endZ; z++)
+					{
+						const int offset = (texWidth * 4 * z) + x * 4;
+						const glm::vec2 uv((x - startX) / (float)screenWidth, (z - startZ) / (float)screenWidth);
+						const Uint32 pixelColour = getpixel(spriteTexture.GetSDLSurface(), uv.x * spriteTexture.GetSDLSurface()->w, uv.y * spriteTexture.GetSDLSurface()->h);
+						const Uint8 r = pixelColour;
+						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
+						const Uint8 b = *(((Uint8*)&pixelColour) + 2);
+						const Uint8 a = *(((Uint8*)&pixelColour) + 3);
+
+						if (a > 0)
+						{
+							pixels[offset + 0] = b;
+							pixels[offset + 1] = g;
+							pixels[offset + 2] = r;
+						}
+					}
+				}
 			}
 
 		}

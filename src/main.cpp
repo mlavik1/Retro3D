@@ -17,7 +17,9 @@
 #include "st_assert.h"
 #include "player_controller.h"
 #include "world.h"
+#include "sprite_component.h"
 
+#include <typeinfo>
 
 #undef main // TEMP - TODO
 
@@ -39,8 +41,15 @@ int main(int argc, char** argv)
 	player->AddComponent(camComp);
 	__Assert(player->GetComponent<CameraComponent>() == camComp);
 
-	GGameEngine->GetWorld()->AddActor(player);
 	GGameEngine->GetPlayerController()->SetPlayer(player);
+
+	Actor* actor1 = new Actor();
+
+	SpriteComponent* spriteComp = new SpriteComponent();
+	spriteComp->SetTexture("resources//textures//grass1.png");
+	actor1->AddComponent(spriteComp);
+	actor1->GetTransform().SetPosition(glm::vec3(2.5f, 4.0f, 0.5f));
+
 
 	GGameEngine->GetSceneRenderer()->SetCameraComponent(camComp); // TODO: make this automatic
 

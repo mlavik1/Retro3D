@@ -4,6 +4,13 @@
 
 namespace Retro3D
 {
+	IMPLEMENT_CLASS(CameraComponent)
+
+	CameraComponent::CameraComponent()
+	{
+
+	}
+
 	void CameraComponent::OnStart()
 	{
 		Component::OnStart();

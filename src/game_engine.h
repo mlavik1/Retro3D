@@ -12,6 +12,7 @@ namespace Retro3D
 	class SceneRenderer;
 	class World;
 	class PlayerController;
+	class WorldMessageBus;
 
 	class GameEngine
 	{
@@ -25,6 +26,7 @@ namespace Retro3D
 		float mDeltaTime = 0.1f;
 		bool mIsRunning;
 		ConfigReader mGameConfig;
+		WorldMessageBus* mWorldMessageBus;
 
 		GameEngine();
 
@@ -45,6 +47,7 @@ namespace Retro3D
 		inline World* GetWorld() { return mWorld; }
 		inline PlayerController* GetPlayerController() { return mPlayerController; }
 		inline ConfigReader& GetGameConfig() { return mGameConfig; }
+		inline WorldMessageBus* GetWorldMessageBus() { return mWorldMessageBus; }
 	};
 }
 
