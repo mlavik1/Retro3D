@@ -331,10 +331,10 @@ namespace Retro3D
 		}
 
 		/*** Render sprites ***/
-		for (auto pair : renderObjects)
+		for (auto iter = renderObjects.rbegin(); iter != renderObjects.rend(); iter++)
 		{
-			const glm::vec3& spriteCentrePos = pair.second.mPosition;
-			const Texture& spriteTexture = *pair.second.mTexture;
+			const glm::vec3& spriteCentrePos = (*iter).second.mPosition;
+			const Texture& spriteTexture = *(*iter).second.mTexture;
 			const float spriteWidth = 1.0f;  // TODO
 			const float spriteHeight = 1.0f; // TODO
 			const glm::vec3 spriteLeftPos = spriteCentrePos - camRight * 0.5f;
@@ -395,7 +395,8 @@ namespace Retro3D
 						const Uint8 r = pixelColour;
 						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
 						const Uint8 b = *(((Uint8*)&pixelColour) + 2);
-						const Uint8 a = *(((Uint8*)&pixelColour) + 3);
+						// TODO: do this when loading picture. Make sure RGB pictures hae RGBA with A=255 
+						const Uint8 a = spriteTexture.GetSDLSurface()->format->BytesPerPixel == 3 ? 255 : *(((Uint8*)&pixelColour) + 3); // TODO: do this when loading picture. Make sure RGB pictures hae RGBA with A=255
 
 						if (a > 0)
 						{

@@ -44,11 +44,17 @@ int main(int argc, char** argv)
 	GGameEngine->GetPlayerController()->SetPlayer(player);
 
 	Actor* actor1 = new Actor();
-
 	SpriteComponent* spriteComp = new SpriteComponent();
 	spriteComp->SetTexture("resources//textures//grass1.png");
 	actor1->AddComponent(spriteComp);
 	actor1->GetTransform().SetPosition(glm::vec3(2.5f, 4.0f, 0.5f));
+
+
+	Actor* actor2 = new Actor();
+	SpriteComponent* spriteComp2 = new SpriteComponent();
+	spriteComp2->SetTexture("resources//textures//test2.png");
+	actor2->AddComponent(spriteComp2);
+	actor2->GetTransform().SetPosition(glm::vec3(2.5f, 5.0f, 0.7f));
 
 
 	GGameEngine->GetSceneRenderer()->SetCameraComponent(camComp); // TODO: make this automatic
