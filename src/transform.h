@@ -18,6 +18,10 @@ namespace Retro3D
 
 		void SetPosition(glm::vec3 arg_pos);
 		void SetRotation(glm::mat4 arg_rot);
+
+		glm::vec3 GetForwardVector() const;
+		glm::vec3 GetRightVector() const;
+		glm::vec3 GetUpVector() const;
 	};
 }
 

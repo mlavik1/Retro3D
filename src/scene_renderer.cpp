@@ -23,13 +23,14 @@ SDL_Texture* renderTexture;
 
 std::vector<unsigned char> pixels;
 std::vector<unsigned char> clearPixels;
+std::vector<float> depthBuffer;
+std::vector<float> clearDepthBuffer;
 
 /* END: TEMP FOR TESTING */
 
 
 namespace Retro3D
 {
-
 	SceneRenderer::SceneRenderer()
 	{
 		Window* window = GGameEngine->GetWindow();
@@ -44,13 +45,24 @@ namespace Retro3D
 			clearPixels[i] = SDL_ALPHA_OPAQUE; // fill with 255, so we won't have to set the alpha when rendering
 		}
 		pixels = clearPixels; // pixel array containing the rendered scene
+
+		// Set up and clear the depth buffer
+		clearDepthBuffer = std::vector<float>(texWidth, 0);
+		for (size_t i = 0; i < clearDepthBuffer.size(); i++)
+		{
+			clearDepthBuffer[i] = 10000.0f;
+		}
+		depthBuffer = clearDepthBuffer;
 	}
+
 
 	SceneRenderer::~SceneRenderer()
 	{
 	}
 
-
+	/**
+	* Set level to render
+	**/
 	void SceneRenderer::SetLevel(Level* arg_level)
 	{
 		mLevel = arg_level;
@@ -75,11 +87,18 @@ namespace Retro3D
 		
 	}
 
+	/**
+	* Set active camera component to render from.
+	**/
 	void SceneRenderer::SetCameraComponent(CameraComponent* arg_comp)
 	{
 		mCameraComponent = arg_comp;
 	}
 
+	/**
+	* Render the whole scene.
+	* Will render walls, ceiling, floor, skybox and sprites
+	**/
 	void SceneRenderer::RenderScene()
 	{
 		__Assert(mLevel != nullptr);
@@ -95,11 +114,14 @@ namespace Retro3D
 		const std::string& skyboxTexture = mLevel->GetSkyboxTexture();
 		bool renderSkybox = skyboxTexture != "";
 
+		// Setup sprite render objects - TODO: don't do this here!
 		const std::vector<SpriteComponent*> spriteComps = GGameEngine->GetWorld()->GetComponentsOfType<SpriteComponent>();
 		std::multimap<float, SpriteRenderObject> renderObjects;
 		for (SpriteComponent* comp : spriteComps)
 		{
-			if (comp->GetVisibleTexture() != nullptr)
+			const glm::vec3 dirToCompCentre = comp->GetActor()->GetTransform().GetPosition() - mCameraComponent->GetCameraTransform().GetPosition();
+			if (comp->GetVisibleTexture() != nullptr
+				&& glm::dot(mCameraComponent->GetCameraTransform().GetForwardVector(), dirToCompCentre) > 0.0f)
 			{
 				const glm::vec3 actorPos = comp->GetActor()->GetTransform().GetPosition();
 				const float dist = glm::length(actorPos - camPos);
@@ -140,7 +162,7 @@ namespace Retro3D
 			float tNextYIntersect = fabsf(rayDir.y) < 0.0001f ? 99999.0f : ((rayDir.y > 0 ? floorf(currPos.y + 1.0f) : floorf(currPos.y)) - currPos.y) / rayDir.y;; // t at next intersection point with Y-axis
 			bool xAxisInters;
 
-			char gridCellValue = 0; // hti result (0 == nothing)
+			char gridCellValue = 0; // hit result (0 == nothing)
 
 								   /*** Jump to nearest grid cell intersection (inters. with x-axis or y-axis) something is hit ***/
 			while (t < 100.0f)
@@ -208,6 +230,8 @@ namespace Retro3D
 						pixels[offset + 0] = b;
 						pixels[offset + 1] = g;
 						pixels[offset + 2] = r;
+
+						depthBuffer[x] = t; // store depth
 					}
 				}
 			}
@@ -306,7 +330,6 @@ namespace Retro3D
 			}
 		}
 
-		//LOG_INFO() << renderObjects.size();
 		/*** Render sprites ***/
 		for (auto pair : renderObjects)
 		{
@@ -334,11 +357,14 @@ namespace Retro3D
 			const glm::vec3 spriteLeftProj = spriteLeftLocal + u2 * t2;
 
 			const float spriteWidthProj = fabsf(spriteCentreProj.x - spriteLeftProj.x);
-			const int screenWidth = (spriteWidthProj / camWidth) * texWidth;
+			const int spriteWidthScreenSpace = (spriteWidthProj / camWidth) * texWidth;
 			const int spriteXOffset = (spriteCentreProj.x / camWidth) * texWidth;
 			const int spriteZOffset = (spriteLeftProj.z / camHeight) * texHeight;
-			const int startX = (texWidth / 2) + spriteXOffset - (screenWidth / 2);
-			const int endX = (texWidth / 2) + spriteXOffset + (screenWidth / 2);
+			const int startX = (texWidth / 2) + spriteXOffset - (spriteWidthScreenSpace / 2);
+			const int endX = (texWidth / 2) + spriteXOffset + (spriteWidthScreenSpace / 2);
+
+			const float distToCentreSprite = glm::length(w1);
+			const float sqrDistToCentreSprite = distToCentreSprite * distToCentreSprite;
 
 			if (endX >= 0 && startX < texWidth)
 			{ 
@@ -352,11 +378,20 @@ namespace Retro3D
 				const int endX2 = std::min(endX, texWidth - 1);
 				for (int x = startX2; x < endX2; x++)
 				{
+					const float relXOffset = ((x - startX) / (float)spriteWidthScreenSpace);
+					const float uCoord = relXOffset * spriteTexture.GetSDLSurface()->w;
+					const float xOFfsetFromCentre = (relXOffset - 0.5f) * spriteWidth; // dist from sprite centre
+					const float sqrDistFromCam = (xOFfsetFromCentre * xOFfsetFromCentre) + sqrDistToCentreSprite;
+					const float currDepth = depthBuffer[x];
+					if (sqrDistFromCam > (currDepth * currDepth))
+						continue; // we have already rendered a wall between the camera and the sprite
+					
 					for (int z = startZ; z < endZ; z++)
 					{
 						const int offset = (texWidth * 4 * z) + x * 4;
-						const glm::vec2 uv((x - startX) / (float)screenWidth, (z - startZ) / (float)screenWidth);
-						const Uint32 pixelColour = getpixel(spriteTexture.GetSDLSurface(), uv.x * spriteTexture.GetSDLSurface()->w, uv.y * spriteTexture.GetSDLSurface()->h);
+						const float vCoord = (z - startZ) / (float)spriteWidthScreenSpace;
+						const glm::vec2 uv(uCoord, vCoord);
+						const Uint32 pixelColour = getpixel(spriteTexture.GetSDLSurface(), uv.x, uv.y * spriteTexture.GetSDLSurface()->h);
 						const Uint8 r = pixelColour;
 						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
 						const Uint8 b = *(((Uint8*)&pixelColour) + 2);
@@ -383,6 +418,7 @@ namespace Retro3D
 		SDL_RenderPresent(GGameEngine->GetWindow()->GetSDLRenderer());
 
 		pixels = clearPixels; // TODO
+		clearDepthBuffer = clearDepthBuffer; // TODO
 
 	}
 
