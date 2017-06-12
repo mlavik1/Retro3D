@@ -21,7 +21,15 @@
 
 #include <typeinfo>
 
+#include "chaiscript/chaiscript.hpp"
+
 #undef main // TEMP - TODO
+
+
+std::string helloWorld(const std::string &t_name) {
+	return "Hello " + t_name + "!";
+}
+
 
 int main(int argc, char** argv)
 {
@@ -29,6 +37,13 @@ int main(int argc, char** argv)
 
 	using namespace Retro3D;
 
+	chaiscript::ChaiScript chai;
+	
+	chai.add(chaiscript::fun(&helloWorld), "helloWorld");
+	chai.eval(R"(
+    puts(helloWorld("Test"));
+  )");
+	
 	GameEngine* engine = GameEngine::CreateGameEngine();
 
 	GGameEngine->GetCurrentLevel()->LoadLevel("level1");
