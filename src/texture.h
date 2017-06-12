@@ -1,7 +1,7 @@
 #ifndef RETRO3D_TEXTURE_H
 #define RETRO3D_TEXTURE_H
 
-class SDL_Surface;
+struct SDL_Surface;
 
 namespace Retro3D
 {

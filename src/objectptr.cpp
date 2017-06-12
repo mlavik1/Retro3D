@@ -34,6 +34,17 @@ namespace Retro3D
 	}
 
 	template<typename T>
+	ObjectPtr<T>& ObjectPtr<T>::operator=(const ObjectPtr<T>& arg_other)
+	{
+		ObjectRefHandle* oldHandle = mRefHandle;
+		mRefHandle = arg_other.mRefHandle;
+		mRefHandle->AddRef();
+		if (oldHandle != nullptr)
+			oldHandle->RemoveRef();
+		return (*this);
+	}
+
+	template<typename T>
 	T* ObjectPtr<T>::Get()
 	{
 		return static_cast<T*>(mRefHandle->GetObject());

@@ -7,7 +7,8 @@
 #include "texture.h"
 #include <glm/glm.hpp>
 
-class SDL_Surface;
+struct SDL_Surface;
+struct SDL_Texture;
 
 namespace Retro3D
 {
@@ -31,6 +32,11 @@ namespace Retro3D
 		SDL_Surface* mSkyboxTexture = nullptr;
 		ObjectPtr<CameraComponent> mCameraComponent; // TODO: pass on some other structure
 		float mFOV = 95;
+		SDL_Texture* mRenderTexture;
+		std::vector<unsigned char> mPixels;
+		std::vector<unsigned char> mClearPixels;
+		std::vector<float> mDepthBuffer;
+		std::vector<float> mClearDepthBuffer;
 	};
 
 	class SpriteRenderObject

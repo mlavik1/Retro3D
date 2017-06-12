@@ -1,7 +1,6 @@
 #include "scene_renderer.h"
-
-#include <sdl2/SDL.h>
 #include <sdl2/SDL_image.h>
+#include <sdl2/SDL.h>
 #include <glm/gtx/transform.hpp>
 #include <vector>
 #include "game_engine.h"
@@ -15,19 +14,13 @@
 #include <map>
 #include "actor.h"
 
+/* BEGIN: TEMP FOR TESTING */
 float camWidth = 0.2f;
 
 const int texWidth = 800;
 const int texHeight = 600;
-SDL_Texture* renderTexture;
-
-std::vector<unsigned char> pixels;
-std::vector<unsigned char> clearPixels;
-std::vector<float> depthBuffer;
-std::vector<float> clearDepthBuffer;
 
 /* END: TEMP FOR TESTING */
-
 
 namespace Retro3D
 {
@@ -36,23 +29,23 @@ namespace Retro3D
 		Window* window = GGameEngine->GetWindow();
 
 		/*** Set up the render target texture ***/
-		renderTexture = SDL_CreateTexture(window->GetSDLRenderer(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texWidth, texHeight);
+		mRenderTexture = SDL_CreateTexture(window->GetSDLRenderer(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texWidth, texHeight);
 
 		/*** Set up pixel arrays ***/
-		clearPixels = std::vector<unsigned char>(texWidth * texHeight * 4, 0); // clear pixel array. "pixels" array is set to this before rendering
-		for (size_t i = 0; i < clearPixels.size(); i++)
+		mClearPixels = std::vector<unsigned char>(texWidth * texHeight * 4, 0); // clear pixel array. "pixels" array is set to this before rendering
+		for (size_t i = 0; i < mClearPixels.size(); i++)
 		{
-			clearPixels[i] = SDL_ALPHA_OPAQUE; // fill with 255, so we won't have to set the alpha when rendering
+			mClearPixels[i] = SDL_ALPHA_OPAQUE; // fill with 255, so we won't have to set the alpha when rendering
 		}
-		pixels = clearPixels; // pixel array containing the rendered scene
+		mPixels = mClearPixels; // pixel array containing the rendered scene
 
 		// Set up and clear the depth buffer
-		clearDepthBuffer = std::vector<float>(texWidth, 0);
-		for (size_t i = 0; i < clearDepthBuffer.size(); i++)
+		mClearDepthBuffer = std::vector<float>(texWidth, 0);
+		for (size_t i = 0; i < mClearDepthBuffer.size(); i++)
 		{
-			clearDepthBuffer[i] = 10000.0f;
+			mClearDepthBuffer[i] = 10000.0f;
 		}
-		depthBuffer = clearDepthBuffer;
+		mDepthBuffer = mClearDepthBuffer;
 	}
 
 
@@ -164,7 +157,7 @@ namespace Retro3D
 
 			char gridCellValue = 0; // hit result (0 == nothing)
 
-								   /*** Jump to nearest grid cell intersection (inters. with x-axis or y-axis) something is hit ***/
+			/*** Jump to nearest grid cell intersection (inters. with x-axis or y-axis) something is hit ***/
 			while (t < 100.0f)
 			{
 				if (tNextXIntersect < tNextYIntersect)
@@ -182,8 +175,8 @@ namespace Retro3D
 
 				// update current position
 				currPos = rayStart + rayDir*(t*1.01f); // TODO: if X-axis intersect, add extra tolerance in X component
-				const int gridX = floorf(currPos.x);
-				const int gridY = floorf(currPos.y);
+				const int gridX = (int)currPos.x;
+				const int gridY = (int)currPos.y;
 
 				// check new grid cell:
 				if (gridY >= mLevel->GetDimensionY() || gridX >= mLevel->GetDimensionX() || gridY < 0 || gridX < 0)
@@ -201,10 +194,10 @@ namespace Retro3D
 			const float cosA = glm::dot(dirToCurrPosTop, camForward);
 			const float dDivCosA = d / cosA;
 			const glm::vec3 currPosTopProjCam = camPos + dirToCurrPosTop * dDivCosA;
-			const float halfHeight = currPosTopProjCam.z - camPos.z;
-			const float height = halfHeight * 2.0f;
-			const int heightScreenSpace = (height / camHeight) * texHeight;
-			const int pixelsToSkip = texHeight - heightScreenSpace;
+			const float wallHalfHeight = currPosTopProjCam.z - camPos.z;
+			const float wallHeight = wallHalfHeight * 2.0f;
+			const int wallHeightScreenSpace = (wallHeight / camHeight) * texHeight;
+			const int pixelsToSkip = texHeight - wallHeightScreenSpace;
 
 			if (gridCellValue != 0)
 			{
@@ -220,18 +213,18 @@ namespace Retro3D
 					{
 						const int offset = (texWidth * 4 * z) + x * 4;
 
-						const float realZ = 1.0f - ((float)(z - pixelsToSkip / 2) / heightScreenSpace);
+						const float realZ = 1.0f - ((float)(z - pixelsToSkip / 2) / wallHeightScreenSpace);
 						const glm::vec2 uv = xAxisInters ? glm::vec2(currPos.y - gridY, 1.0f - realZ) : glm::vec2(currPos.x - gridX, 1.0f - realZ);
 						const Uint32 pixelColour = getpixel(wallTextureSurface, uv.x * wallTextureSurface->w, uv.y * wallTextureSurface->h);
 						const Uint8 r = pixelColour;
 						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
 						const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
 
-						pixels[offset + 0] = b;
-						pixels[offset + 1] = g;
-						pixels[offset + 2] = r;
+						mPixels[offset + 0] = b;
+						mPixels[offset + 1] = g;
+						mPixels[offset + 2] = r;
 
-						depthBuffer[x] = t; // store depth
+						mDepthBuffer[x] = t; // store depth
 					}
 				}
 			}
@@ -266,9 +259,9 @@ namespace Retro3D
 						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
 						const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
 
-						pixels[offset + 0] = b;
-						pixels[offset + 1] = g;
-						pixels[offset + 2] = r;
+						mPixels[offset + 0] = b;
+						mPixels[offset + 1] = g;
+						mPixels[offset + 2] = r;
 					}
 					else if (renderSkybox)
 					{
@@ -289,15 +282,15 @@ namespace Retro3D
 						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
 						const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
 
-						pixels[offset + 0] = b;
-						pixels[offset + 1] = g;
-						pixels[offset + 2] = r;
+						mPixels[offset + 0] = b;
+						mPixels[offset + 1] = g;
+						mPixels[offset + 2] = r;
 					}
 				}
 			}
 
 			/*** Draw floor ***/
-			for (int z = heightScreenSpace + pixelsToSkip / 2; z < texHeight; z++)
+			for (int z = wallHeightScreenSpace + pixelsToSkip / 2; z < texHeight; z++)
 			{
 				const float relZ = (float)z / texHeight;
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)
@@ -324,9 +317,9 @@ namespace Retro3D
 				const Uint8 g = *(((Uint8*)&pixelColour) + 1);
 				const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
 
-				pixels[offset + 0] = b;
-				pixels[offset + 1] = g;
-				pixels[offset + 2] = r;
+				mPixels[offset + 0] = b;
+				mPixels[offset + 1] = g;
+				mPixels[offset + 2] = r;
 			}
 		}
 
@@ -353,8 +346,8 @@ namespace Retro3D
 			// b + zt = 0  =>  t = -b / z
 			const float t1 = -1.0f * spriteCentreLocal.y / u1.y;
 			const float t2 = -1.0f * spriteLeftLocal.y / u2.y;
-			const glm::vec3 spriteCentreProj = spriteCentreLocal + u1 * t1;
-			const glm::vec3 spriteLeftProj = spriteLeftLocal + u2 * t2;
+			const glm::vec3 spriteCentreProj = spriteCentreLocal + u1 * t1; // projection of sprite centre onto camera
+			const glm::vec3 spriteLeftProj = spriteLeftLocal + u2 * t2;		// projection of sprite leftmost pos onto camera
 
 			const float spriteWidthProj = fabsf(spriteCentreProj.x - spriteLeftProj.x);
 			const int spriteWidthScreenSpace = (spriteWidthProj / camWidth) * texWidth;
@@ -381,11 +374,14 @@ namespace Retro3D
 					const float relXOffset = ((x - startX) / (float)spriteWidthScreenSpace);
 					const float uCoord = relXOffset * spriteTexture.GetSDLSurface()->w;
 					const float xOFfsetFromCentre = (relXOffset - 0.5f) * spriteWidth; // dist from sprite centre
+
+					// Compare depth to depth buffer
 					const float sqrDistFromCam = (xOFfsetFromCentre * xOFfsetFromCentre) + sqrDistToCentreSprite;
-					const float currDepth = depthBuffer[x];
+					const float currDepth = mDepthBuffer[x];
 					if (sqrDistFromCam > (currDepth * currDepth))
 						continue; // we have already rendered a wall between the camera and the sprite
 					
+					// Render each pixel in Z-axis
 					for (int z = startZ; z < endZ; z++)
 					{
 						const int offset = (texWidth * 4 * z) + x * 4;
@@ -400,9 +396,9 @@ namespace Retro3D
 
 						if (a > 0)
 						{
-							pixels[offset + 0] = b;
-							pixels[offset + 1] = g;
-							pixels[offset + 2] = r;
+							mPixels[offset + 0] = b;
+							mPixels[offset + 1] = g;
+							mPixels[offset + 2] = r;
 						}
 					}
 				}
@@ -413,13 +409,13 @@ namespace Retro3D
 		SDL_SetRenderDrawColor(GGameEngine->GetWindow()->GetSDLRenderer(), 0, 0, 0, SDL_ALPHA_OPAQUE);
 		SDL_RenderClear(GGameEngine->GetWindow()->GetSDLRenderer());
 
-		SDL_UpdateTexture(renderTexture, NULL, &pixels[0], texWidth * 4);
+		SDL_UpdateTexture(mRenderTexture, NULL, &mPixels[0], texWidth * 4);
 
-		SDL_RenderCopy(GGameEngine->GetWindow()->GetSDLRenderer(), renderTexture, NULL, NULL);
+		SDL_RenderCopy(GGameEngine->GetWindow()->GetSDLRenderer(), mRenderTexture, NULL, NULL);
 		SDL_RenderPresent(GGameEngine->GetWindow()->GetSDLRenderer());
 
-		pixels = clearPixels; // TODO
-		clearDepthBuffer = clearDepthBuffer; // TODO
+		mPixels = mClearPixels; // TODO
+		mDepthBuffer = mClearDepthBuffer; // TODO
 
 	}
 

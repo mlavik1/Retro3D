@@ -25,6 +25,8 @@ namespace Retro3D
 		ObjectPtr(Object* arg_object);
 		~ObjectPtr();
 
+		ObjectPtr<T>& operator=(const ObjectPtr<T>& arg_other);
+
 		T* Get();
 		T* operator->() const;
 		bool operator==(const ObjectPtr<T>& arg_other) const;
