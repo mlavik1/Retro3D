@@ -9,6 +9,7 @@ namespace Retro3D
 	class Level;
 	class Window;
 	class InputManager;
+	class ScriptManager;
 	class SceneRenderer;
 	class World;
 	class PlayerController;
@@ -20,6 +21,7 @@ namespace Retro3D
 		Level* mCurrentLevel;
 		Window* mWindow;
 		InputManager* mInputManager;
+		ScriptManager* mScriptManager;
 		SceneRenderer* mSceneRenderer;
 		World* mWorld;
 		PlayerController* mPlayerController;
@@ -37,12 +39,15 @@ namespace Retro3D
 		void StartEngine();
 		void TickEngine();
 
+		float GetDeltaTime();
+
 		void SetPlayerController(PlayerController* arg_controller) { mPlayerController = arg_controller; } // TODO
 
 	public:
 		inline Level* GetCurrentLevel() { return mCurrentLevel; }
 		inline Window* GetWindow() { return mWindow; }
 		inline InputManager* GetInputManager() { return mInputManager; }
+		inline ScriptManager* GetScriptManager() { return mScriptManager; }
 		inline SceneRenderer* GetSceneRenderer() { return mSceneRenderer; }
 		inline World* GetWorld() { return mWorld; }
 		inline PlayerController* GetPlayerController() { return mPlayerController; }

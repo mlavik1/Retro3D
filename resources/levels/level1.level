@@ -5,6 +5,7 @@ map_wall:level1.wmap
 map_floor:level1.fmap
 map_ceiling:level1.cmap
 skybox:skybox2.png
+ChaiScript:TestLevel
 
 [textures]
 1:wall1.png

@@ -1,0 +1,15 @@
+class TestClass
+{
+	def TestClass()
+	{
+		print("Creating TestClass");
+	}
+	
+	def OnStart()
+	{
+	}
+	
+	def OnTick(deltatime)
+	{
+	}
+};

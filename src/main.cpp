@@ -21,14 +21,9 @@
 
 #include <typeinfo>
 
-#include "chaiscript/chaiscript.hpp"
+#include "script_manager.h"
 
 #undef main // TEMP - TODO
-
-
-std::string helloWorld(const std::string &t_name) {
-	return "Hello " + t_name + "!";
-}
 
 
 int main(int argc, char** argv)
@@ -37,14 +32,22 @@ int main(int argc, char** argv)
 
 	using namespace Retro3D;
 
-	chaiscript::ChaiScript chai;
+	/*
+	std::string obj_id = "testObj";
 	
-	chai.add(chaiscript::fun(&helloWorld), "helloWorld");
-	chai.eval(R"(
-    puts(helloWorld("Test"));
-  )");
-	
+	chai.eval("class TestClass { def TestClass() {} }; var t = TestClass();");
+
+	auto func = chai.eval<std::function<void(float)> >("fun(dt) {" + obj_id + ".on_update(dt); }");
+	func(123.0f);
+	*/
+
 	GameEngine* engine = GameEngine::CreateGameEngine();
+
+
+
+	engine->GetScriptManager()->RegisterScript("resources//chaiscript//TestClass.chai");
+	engine->GetScriptManager()->RegisterScript("resources//chaiscript//TestLevel.chai");
+
 
 	GGameEngine->GetCurrentLevel()->LoadLevel("level1");
 	engine->GetSceneRenderer()->SetLevel(GGameEngine->GetCurrentLevel()); // todo: do in engine

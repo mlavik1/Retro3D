@@ -9,6 +9,7 @@
 #include "actor.h"
 #include "player_controller.h"
 #include "world_messagebus.h"
+#include "script_manager.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -24,6 +25,7 @@ namespace Retro3D
 		atexit(SDL_Quit);
 		GGameEngine = this;
 		mInputManager = new InputManager();
+		mScriptManager = new ScriptManager();
 		mWindow = new Window();
 		mSceneRenderer = new SceneRenderer();
 		mWorldMessageBus = new WorldMessageBus();
@@ -94,6 +96,11 @@ namespace Retro3D
 		const static Uint64 freq = SDL_GetPerformanceFrequency();
 		mDeltaTime = (end - start) / static_cast< float >(freq);
 		//std::cout << "Frame time: " << mDeltaTime * 1000.0 << "ms" << std::endl;
+	}
+
+	float GameEngine::GetDeltaTime()
+	{
+		return mDeltaTime;
 	}
 
 }

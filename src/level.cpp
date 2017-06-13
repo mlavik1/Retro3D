@@ -6,6 +6,9 @@
 #include <unordered_map>
 #include <sstream>
 #include "st_assert.h"
+#include "game_engine.h"
+#include "script_manager.h"
+#include "chaiscript/chaiscript.hpp"
 
 namespace Retro3D
 {
@@ -39,6 +42,7 @@ namespace Retro3D
 		std::string floorMapName;
 		std::string ceilingMapName;
 		std::string skyboxTexture;
+		std::string chaiscriptName;
 		int dimX = 0;
 		int dimY = 0;
 
@@ -48,6 +52,7 @@ namespace Retro3D
 		levelReader.GetString("level", "skybox", skyboxTexture);
 		levelReader.GetInt("level", "dim_x", dimX);
 		levelReader.GetInt("level", "dim_x", dimY);
+		levelReader.GetString("level", "ChaiScript", chaiscriptName);
 
 		auto textureMap = levelReader.GetSectionAsMap("textures");
 		for (auto texturePtr : textureMap)
@@ -70,6 +75,12 @@ namespace Retro3D
 			loadMap(ceilingMapName.c_str(), MapType::CeilingMap);
 
 		mSkyboxTexture = skyboxTexture;
+
+		if (chaiscriptName != "")
+		{
+			chaiscript::ChaiScript* chai = GGameEngine->GetScriptManager()->GetChaiScriptCore();
+			chai->eval(chaiscriptName + std::string("();"));
+		}
 
 		return true;
 	}

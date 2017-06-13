@@ -1,0 +1,7 @@
+class TestLevel
+{
+	def TestLevel()
+	{
+		print("Creating TestLevel from chaiscript");
+	}
+};
