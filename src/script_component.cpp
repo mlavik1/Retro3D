@@ -8,6 +8,11 @@ namespace Retro3D
 {
 	IMPLEMENT_CLASS(ScriptComponent);
 
+	ScriptComponent::ScriptComponent()
+	{
+
+	}
+
 	void ScriptComponent::SetScriptClass(const char* arg_class)
 	{
 		mScriptClass = arg_class;
@@ -23,23 +28,10 @@ namespace Retro3D
 		return mScriptClass;
 	}
 
-	bool ScriptComponent::CreateScriptInstance()
-	{
-		bool canCreate = GetScriptClassName() != "";
-		if (!canCreate)
-			return false;
-
-		chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
-		std::string createInstanceCall = std::string("var ") + GetScriptObjectName() + std::string(" = ") + mScriptClass;
-		chaiScriptCore->eval(createInstanceCall);
-		//chaiScriptCore->eval("var t = TestClass();");
-		mCanExecute = true;
-		return true;
-	}
-
 
 	void ScriptComponent::OnStart()
 	{
+		createScriptInstance(); // Create an instance of the class defined in script.
 		if (mCanExecute)
 		{
 			chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
@@ -54,9 +46,27 @@ namespace Retro3D
 		{
 			chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
 			// TODO: call functions the "right" way
-			std::string createInstanceCall = GetScriptObjectName() + std::string(".OnTick(") + std::to_string(GGameEngine->GetDeltaTime()) + std::string(")");
+			std::string createInstanceCall = GetScriptObjectName() + std::string(".OnTick(") + std::to_string(GGameEngine->GetDeltaTime()) + std::string(");");
 			chaiScriptCore->eval(createInstanceCall);
+
+			//auto func = chaiScriptCore->eval<std::function<void(float)> >("fun(dt) {" + GetScriptObjectName() + ".OnTick(dt); }");
+			//func(GGameEngine->GetDeltaTime());
+
 		}
+	}
+
+
+	bool ScriptComponent::createScriptInstance()
+	{
+		bool canCreate = GetScriptClassName() != "";
+		if (!canCreate)
+			return false;
+
+		chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
+		std::string createInstanceCall = std::string("var ") + GetScriptObjectName() + std::string(" = ") + mScriptClass + std::string("();");
+		chaiScriptCore->eval(createInstanceCall);
+		mCanExecute = true;
+		return true;
 	}
 
 }

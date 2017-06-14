@@ -1,8 +1,10 @@
 class TestClass
 {
+	var testVal;
 	def TestClass()
 	{
 		print("Creating TestClass");
+		this.testVal = 1;
 	}
 	
 	def OnStart()
@@ -11,5 +13,11 @@ class TestClass
 	
 	def OnTick(deltatime)
 	{
+		if(this.testVal <= 10)
+		{
+			print(GetGameEngine().GetDeltaTime());
+			print(this.testVal);
+			this.testVal = this.testVal + 1;
+		}
 	}
 };

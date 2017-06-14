@@ -32,10 +32,12 @@ namespace Retro3D
 		for (Actor* actor : GGameEngine->GetWorldMessageBus()->GetActorsAdded())
 		{
 			addActor(actor);
+			actor->OnStart();
 		}
 		for (Component* comp : GGameEngine->GetWorldMessageBus()->GetComponentsAdded())
 		{
 			addComponent(comp);
+			comp->OnStart();
 		}
 	}
 }

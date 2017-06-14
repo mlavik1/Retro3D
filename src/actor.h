@@ -18,6 +18,9 @@ namespace Retro3D
 		Transform mTransform;
 		std::vector<Component*> mComponents; // TODO: RTTI
 
+	private:
+		bool mHasStarted = false;
+
 	public:
 		Actor();
 		~Actor();

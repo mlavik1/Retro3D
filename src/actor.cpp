@@ -24,10 +24,7 @@ namespace Retro3D
 
 	void Actor::OnStart()
 	{
-		for (Component* comp : mComponents)
-		{
-			comp->OnStart();
-		}
+		// do not call OnSTart() on components, since this is done from world.cpp
 	}
 
 	void Actor::OnTick(float arg_deltatime)

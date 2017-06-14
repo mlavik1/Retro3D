@@ -15,14 +15,14 @@ namespace Retro3D
 		std::string mScriptClass;
 		bool mCanExecute = false;
 
+		bool createScriptInstance();
+
 	public:
+		ScriptComponent();
 		void SetScriptClass(const char* arg_class);
 
 		std::string GetScriptObjectName();
 		std::string GetScriptClassName();
-
-		bool CreateScriptInstance();
-
 
 		virtual void OnStart() override;
 		virtual void OnTick(float arg_deltatime) override;

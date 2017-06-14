@@ -18,6 +18,7 @@
 #include "player_controller.h"
 #include "world.h"
 #include "sprite_component.h"
+#include "script_component.h"
 
 #include <typeinfo>
 
@@ -44,7 +45,7 @@ int main(int argc, char** argv)
 	GameEngine* engine = GameEngine::CreateGameEngine();
 
 
-
+	// TODO: initialise from file
 	engine->GetScriptManager()->RegisterScript("resources//chaiscript//TestClass.chai");
 	engine->GetScriptManager()->RegisterScript("resources//chaiscript//TestLevel.chai");
 
@@ -57,7 +58,10 @@ int main(int argc, char** argv)
 
 	CameraComponent* camComp = new CameraComponent();
 	player->AddComponent(camComp);
-	__Assert(player->GetComponent<CameraComponent>() == camComp);
+
+	ScriptComponent* scriptComp = new ScriptComponent();
+	scriptComp->SetScriptClass("TestClass");
+	player->AddComponent(scriptComp);
 
 	GGameEngine->GetPlayerController()->SetPlayer(player);
 

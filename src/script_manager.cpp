@@ -4,11 +4,15 @@
 #include <streambuf>
 #include "debug.h"
 
+#include "chai_bindings.h"
+
 namespace Retro3D
 {
 	ScriptManager::ScriptManager()
 	{
 		mChaiScript = new chaiscript::ChaiScript();
+
+		ChaiBindings::AddBindings(mChaiScript);
 	}
 
 	ScriptManager::~ScriptManager()
