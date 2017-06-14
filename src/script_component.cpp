@@ -36,7 +36,15 @@ namespace Retro3D
 		{
 			chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
 			std::string createInstanceCall = GetScriptObjectName() + std::string(".OnStart()");
-			chaiScriptCore->eval(createInstanceCall);
+			
+			try
+			{
+				chaiScriptCore->eval(createInstanceCall);
+			}
+			catch (std::exception ex)
+			{
+				LOG_ERROR() << "Exception caught in ScriptComponent::OnStart: " << ex.what();
+			}
 		}
 	}
 
@@ -47,7 +55,15 @@ namespace Retro3D
 			chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
 			// TODO: call functions the "right" way
 			std::string createInstanceCall = GetScriptObjectName() + std::string(".OnTick(") + std::to_string(GGameEngine->GetDeltaTime()) + std::string(");");
-			chaiScriptCore->eval(createInstanceCall);
+			
+			try
+			{
+				chaiScriptCore->eval(createInstanceCall);
+			}
+			catch (std::exception ex)
+			{
+				LOG_ERROR() << "Exception caught in ScriptComponent::OnTick: " << ex.what();
+			}
 
 			//auto func = chaiScriptCore->eval<std::function<void(float)> >("fun(dt) {" + GetScriptObjectName() + ".OnTick(dt); }");
 			//func(GGameEngine->GetDeltaTime());
@@ -64,7 +80,16 @@ namespace Retro3D
 
 		chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
 		std::string createInstanceCall = std::string("var ") + GetScriptObjectName() + std::string(" = ") + mScriptClass + std::string("();");
-		chaiScriptCore->eval(createInstanceCall);
+		try
+		{
+			chaiScriptCore->eval(createInstanceCall);
+		}
+		catch (std::exception ex)
+		{
+			LOG_ERROR() << "Failed to create script object for " << mScriptClass << ". Exception: " <<ex.what();
+			return false;
+		}
+		
 		mCanExecute = true;
 		return true;
 	}

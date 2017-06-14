@@ -79,7 +79,14 @@ namespace Retro3D
 		if (chaiscriptName != "")
 		{
 			chaiscript::ChaiScript* chai = GGameEngine->GetScriptManager()->GetChaiScriptCore();
-			chai->eval(chaiscriptName + std::string("();"));
+			try
+			{
+				chai->eval(chaiscriptName + std::string("();"));
+			}
+			catch (std::exception ex)
+			{
+				LOG_ERROR() << "Exception caught in LoadLevel: " << ex.what();
+			}
 		}
 
 		return true;
