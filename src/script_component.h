@@ -19,7 +19,7 @@ namespace Retro3D
 
 	public:
 		ScriptComponent();
-		void SetScriptClass(const char* arg_class);
+		void SetScriptClass(std::string arg_class);
 
 		std::string GetScriptObjectName();
 		std::string GetScriptClassName();

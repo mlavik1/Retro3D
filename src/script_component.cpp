@@ -13,7 +13,7 @@ namespace Retro3D
 
 	}
 
-	void ScriptComponent::SetScriptClass(const char* arg_class)
+	void ScriptComponent::SetScriptClass(std::string arg_class)
 	{
 		mScriptClass = arg_class;
 	}

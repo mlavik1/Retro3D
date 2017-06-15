@@ -2,6 +2,7 @@
 #define RETRO3D_SPRITECOMPONENT_H
 
 #include "component.h"
+#include <string>
 
 namespace Retro3D
 {
@@ -14,7 +15,7 @@ namespace Retro3D
 	public:
 		SpriteComponent();
 
-		void SetTexture(const char* arg_texture);
+		void SetTexture(std::string arg_texture);
 
 		inline Texture* GetVisibleTexture() { return mVisibleTexture; }
 

@@ -1,6 +1,17 @@
 #ifndef RETRO3D_GAMEENGINE_H
 #define RETRO3D_GAMEENGINE_H
 
+/*=============================================================================================
+Game Engine
+
+The core of the game egine.
+Contains:
+	- All managers (InputManager, ScriptManager)
+	- World (where objects exist)
+	and more.
+The game is ticked from here.
+==============================================================================================*/
+
 #include "objectptr.h"
 #include "config_reader.h"
 

@@ -11,10 +11,10 @@ namespace Retro3D
 		
 	}
 
-	void SpriteComponent::SetTexture(const char* arg_texture)
+	void SpriteComponent::SetTexture(std::string arg_texture)
 	{
 		mVisibleTexture = new Texture();
-		if (!mVisibleTexture->LoadTexture(arg_texture))
+		if (!mVisibleTexture->LoadTexture(arg_texture.c_str()))
 		{
 			delete mVisibleTexture;
 			mVisibleTexture = nullptr;

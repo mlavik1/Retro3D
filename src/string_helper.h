@@ -1,6 +1,12 @@
 #ifndef RETRO3D_STRINGHELPER_H
 #define RETRO3D_STRINGHELPER_H
 
+/*=============================================================================================
+Made this for educational purposes.
+
+TODO: CONSIDER REMOVING
+==============================================================================================*/
+
 #include <string>
 #include <vector>
 

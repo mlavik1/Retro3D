@@ -1,6 +1,13 @@
 #ifndef RETRO3D_WORLDMESSAGEBUS_H
 #define RETRO3D_WORLDMESSAGEBUS_H
 
+/*=============================================================================================
+World Message Bus
+
+A "message bus" for world-related events.
+When actors and components are created, they will notify WorldMessateBus.
+==============================================================================================*/
+
 #include <vector>
 
 namespace Retro3D

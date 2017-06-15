@@ -7,6 +7,13 @@
 
 ![screenshot](https://pbs.twimg.com/media/DAnZkWXXgAAHQsH.jpg:large)
 
+Features:
+- Raytraced 3D rendering, similar to old games like Wolfenstein (raytracing on a 2D grid).
+- Level scripts and script components, using ChaiScript.
+- WebAssembly support (can run in browser).
+
+This is a hobby project, made for educational purposes.
+
 # How to build
 
 WINDOWS
@@ -16,7 +23,7 @@ WINDOWS
 - Configure
 - Build
 - Open Visual Studio project
-- Build
+- Build (IN RELEASE CONFIGURATION - Debug will be very slow!)
 - Move the "resources" folder to the build folder (where the .exe-files were built)
 
 WEB ASSEMBLY

@@ -1,6 +1,12 @@
 #ifndef RETRO3D_WORLD_H
 #define RETRO3D_WORLD_H
 
+/*=============================================================================================
+World
+
+Contains actors and components, and is responsible for ticking them.
+==============================================================================================*/
+
 #include <vector>
 #include "objectptr.h"
 #include <unordered_map>
