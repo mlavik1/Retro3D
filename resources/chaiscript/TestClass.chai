@@ -19,5 +19,9 @@ class TestClass
 			print(this.testVal);
 			this.testVal = this.testVal + 1;
 		}
+		if(GetGameEngine().GetInputManager().GetKeyDown("w"))
+		{
+			print("pressed w");
+		}
 	}
 };

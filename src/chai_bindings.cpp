@@ -61,9 +61,9 @@ namespace Retro3D
 
 		// Managers
 		arg_chaiscript->add(chaiscript::user_type<InputManager>(), "InputManager");
-		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKey), "GetKey");
-		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKeyDown), "GetKeyDown");
-		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKeyUp), "GetKeyUp");
+		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKey_String), "GetKey");
+		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKeyDown_String), "GetKeyDown");
+		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKeyUp_String), "GetKeyUp");
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetMousePressed), "GetMousePressed");
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetMouseReleased), "GetMouseReleased");
 
