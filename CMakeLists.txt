@@ -41,6 +41,9 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	endif()
 
 	file(MAKE_DIRECTORY ${DLL_TO_DBG})
+	file(MAKE_DIRECTORY ${DLL_TO_RELEASE})
+	
+	file(MAKE_DIRECTORY ${DLL_TO_DBG})
 	file(GLOB_RECURSE nativeLibsDebug bin/Windows/x86/Debug/*.dll)
 	file(GLOB_RECURSE nativeLibsRelease bin/Windows/x86/Debug/*.dll)
 	foreach(AddonFile ${nativeLibsDebug})
@@ -60,3 +63,18 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 				copy ${AddonFile} ${DLL_TO_RELEASE}/)
 	endforeach(AddonFile)
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+
+
+# Resources
+file(GLOB_RECURSE AddonFiles Resources/*.*)
+foreach(AddonFile ${AddonFiles})
+	get_filename_component(OUT_DIR ${AddonFile} DIRECTORY)
+	get_filename_component(OUT_FILENAME ${AddonFile} NAME)
+	#message(${OUT_DIR})
+	string(REGEX REPLACE "${CMAKE_CURRENT_LIST_DIR}" "" OUT_DIR ${OUT_DIR})
+	
+	file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}${OUT_DIR})
+	add_custom_command(TARGET GET Retro3D PRE_BUILD
+			COMMAND ${CMAKE_COMMAND} -E
+			copy ${AddonFile} ${CMAKE_CURRENT_BINARY_DIR}${OUT_DIR}/)
+endforeach(AddonFile)

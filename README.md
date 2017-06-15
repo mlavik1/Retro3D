@@ -20,11 +20,11 @@ WINDOWS
 - Open CMake GUI (can download from here: https://cmake.org/download/)
 - In "Where is the srouce code", browse to the repository folder containing CMakeLists.txt
 - In "Where to build the binaries", chose any folder (i.e. subfolder "/build")
+- Make sure the directory can be written to (to prevent MSB3073 error)
 - Configure
 - Build
 - Open Visual Studio project
-- Build (IN RELEASE CONFIGURATION - Debug will be very slow!)
-- Move the "resources" folder to the build folder (where the .exe-files were built)
+- Build Retro3D project (IN RELEASE CONFIGURATION - Debug will be very slow!)
 
 WEB ASSEMBLY
 - Make sure you have Emscripten installed (https://developer.mozilla.org/en-US/docs/WebAssembly/C_to_wasm)
