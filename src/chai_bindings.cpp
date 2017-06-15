@@ -11,6 +11,7 @@
 #include "glm/glm.hpp"
 #include "input_manager.h"
 #include "script_manager.h"
+#include "config_reader.h"
 
 namespace Retro3D
 {
@@ -30,11 +31,18 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::fun(&GameEngine::GetCurrentLevel), "GetCurrentLevel");
 		arg_chaiscript->add(chaiscript::fun(&GameEngine::GetInputManager), "GetInputManager");
 		arg_chaiscript->add(chaiscript::fun(&GameEngine::GetScriptManager), "GetScriptManager");
+		arg_chaiscript->add(chaiscript::fun(&GameEngine::GetGameConfig), "GetGameConfig");
 
 		arg_chaiscript->add(chaiscript::user_type<Level>(), "Level");
 		//arg_chaiscript->add(chaiscript::fun(&Level::LoadLevel), "LoadLevel");
 
 		
+		arg_chaiscript->add(chaiscript::user_type<ConfigReader>(), "ConfigReader");
+		arg_chaiscript->add(chaiscript::fun(&ConfigReader::GetString_string), "GetString");
+		arg_chaiscript->add(chaiscript::fun(&ConfigReader::GetInt_string), "GetInt");
+		arg_chaiscript->add(chaiscript::fun(&ConfigReader::GetFloat_string), "GetFloat");
+
+
 		// Actors
 		arg_chaiscript->add(chaiscript::user_type<Actor>(), "Actor");
 		//arg_chaiscript->add(chaiscript::constructor<Actor()>(), "Actor");

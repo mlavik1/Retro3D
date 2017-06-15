@@ -23,6 +23,7 @@ namespace Retro3D
 		bool GetKeyDown(const char* arg_key);
 		bool GetKeyUp(const char* arg_key);
 
+		// std::string versions (used by ChaiScript)
 		bool GetKey_String(const std::string& arg_key) { return GetKey(arg_key.c_str()); }
 		bool GetKeyDown_String(const std::string& arg_key) { return GetKeyDown(arg_key.c_str()); }
 		bool GetKeyUp_String(const std::string& arg_key) { return GetKeyUp(arg_key.c_str()); }
