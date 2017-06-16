@@ -74,6 +74,7 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKeyUp_String), "GetKeyUp");
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetMousePressed), "GetMousePressed");
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetMouseReleased), "GetMouseReleased");
+		arg_chaiscript->add(chaiscript::fun(&InputManager::GetMousePosition), "GetMousePosition");
 
 		arg_chaiscript->add(chaiscript::user_type<ScriptManager>(), "ScriptManager");
 
@@ -87,6 +88,13 @@ namespace Retro3D
 		// glm
 		arg_chaiscript->add(chaiscript::user_type<glm::vec3>(), "vec3");
 		arg_chaiscript->add(chaiscript::constructor<glm::vec3(float, float, float)>(), "vec3");
+		arg_chaiscript->add(chaiscript::fun([](glm::vec3 a, glm::vec3 b) { return a + b; }), "+");
+
+
+		// glm
+		arg_chaiscript->add(chaiscript::user_type<glm::vec2>(), "vec2");
+		arg_chaiscript->add(chaiscript::constructor<glm::vec2(float, float)>(), "vec2");
+		arg_chaiscript->add(chaiscript::fun([](glm::vec2 a, glm::vec2 b) { return a + b; }), "+");
 
 
 		// helper functions
