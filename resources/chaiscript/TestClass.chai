@@ -18,10 +18,26 @@ class TestClass
 			print(GetGameEngine().GetDeltaTime());
 			print(this.testVal);
 			this.testVal = this.testVal + 1;
+			
+			// Test: get ScriptTestActor (owner of this), and get its ScriptComponent, and the the ShriptComponent's ScriptObject (this)
+			var getActorTest = GetActorByName("ScriptTestActor");
+			if(!getActorTest.is_var_null())
+			{
+				var scriptComp = getActorTest.GetScriptComponentByClass("TestClass");
+				if(!scriptComp.is_var_null())
+				{
+					var scriptObj = scriptComp.GetScriptObject();
+					if(!scriptObj.is_var_null())
+					{
+						print(scriptObj.testVal); // Print TestClass::testVal
+					}
+				}
+			}
 		}
 		if(GetGameEngine().GetInputManager().GetKeyDown("w"))
 		{
 			print("pressed w");
 		}
+		
 	}
 };
