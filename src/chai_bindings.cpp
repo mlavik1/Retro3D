@@ -51,6 +51,16 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::fun(&Actor::GetTransform), "GetTransform");
 		arg_chaiscript->add(chaiscript::fun(&Actor::SetActorName), "SetActorName");
 		arg_chaiscript->add(chaiscript::fun(&Actor::GetActorName), "GetActorName");
+		arg_chaiscript->add(chaiscript::fun([](Actor & o, std::string arg_name)
+		{
+			for (ScriptComponent* comp : o.GetComponents<ScriptComponent>())
+			{
+				if (comp->GetScriptClassName() == arg_name)
+					return comp;
+			}
+			return (ScriptComponent*)nullptr;
+		}), "GetScriptComponentByClass");
+
 
 		arg_chaiscript->add(chaiscript::user_type<Player>(), "Player");
 
@@ -61,6 +71,7 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::user_type<ScriptComponent>(), "ScriptComponent");
 		arg_chaiscript->add(chaiscript::fun(&ScriptComponent::SetScriptClass), "SetScriptClass");
 		arg_chaiscript->add(chaiscript::base_class<Component, ScriptComponent>());
+		arg_chaiscript->add(chaiscript::fun(&ScriptComponent::GetScriptObject), "GetScriptObject");
 
 		arg_chaiscript->add(chaiscript::user_type<SpriteComponent>(), "SpriteComponent");
 		arg_chaiscript->add(chaiscript::fun(&SpriteComponent::SetTexture), "SetTexture");

@@ -8,6 +8,7 @@ class TestLevel
 		var scriptTest = CreateScriptComponent();
 		scriptTest.SetScriptClass("TestClass");
 		actorTest.AddComponent(scriptTest);
+		actorTest.SetActorName("ScriptTestActor");
 
 
 		var actor1 = CreateActor();
@@ -21,7 +22,6 @@ class TestLevel
 		spriteComp2.SetTexture("resources//textures//test2.png");
 		actor2.AddComponent(spriteComp2);
 		actor2.GetTransform().SetPosition(vec3(2.5f, 5.0f, 0.7f));
-		
 		actor2.SetActorName("TestActor1");
 		
 		// test:

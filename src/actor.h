@@ -44,6 +44,19 @@ namespace Retro3D
 			}
 		}
 
+		template<typename T>
+		const std::vector<T*> GetComponents()
+		{
+			std::vector<T*> outVector;
+			for (Component* comp : mComponents)
+			{
+				T* t = dynamic_cast<T*>(comp);
+				if (t)
+					outVector.push_back(t);
+			}
+			return outVector;
+		}
+
 		virtual void OnStart();
 		virtual void OnTick(float arg_deltatime);
 

@@ -2,8 +2,9 @@
 #define RETRO3D_SCRIPTCOMPONENT_H
 
 #include "component.h"
-
+#include "chaiscript/chaiscript.hpp"
 #include <string>
+
 
 namespace Retro3D
 {
@@ -15,6 +16,8 @@ namespace Retro3D
 		std::string mScriptClass;
 		bool mCanExecute = false;
 
+		chaiscript::Boxed_Value mScriptObject;
+
 		bool createScriptInstance();
 
 	public:
@@ -23,6 +26,8 @@ namespace Retro3D
 
 		std::string GetScriptObjectName();
 		std::string GetScriptClassName();
+
+		chaiscript::Boxed_Value& GetScriptObject();
 
 		virtual void OnStart() override;
 		virtual void OnTick(float arg_deltatime) override;

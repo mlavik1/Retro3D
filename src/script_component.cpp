@@ -1,7 +1,6 @@
 #include "script_component.h"
 
 #include "script_manager.h"
-#include "chaiscript/chaiscript.hpp"
 #include "game_engine.h"
 
 namespace Retro3D
@@ -27,7 +26,6 @@ namespace Retro3D
 	{
 		return mScriptClass;
 	}
-
 
 	void ScriptComponent::OnStart()
 	{
@@ -71,6 +69,10 @@ namespace Retro3D
 		}
 	}
 
+	chaiscript::Boxed_Value& ScriptComponent::GetScriptObject()
+	{
+		return mScriptObject;
+	}
 
 	bool ScriptComponent::createScriptInstance()
 	{
@@ -83,6 +85,7 @@ namespace Retro3D
 		try
 		{
 			chaiScriptCore->eval(createInstanceCall);
+			mScriptObject = GGameEngine->GetScriptManager()->GetChaiScriptCore()->eval(GetScriptObjectName());
 		}
 		catch (std::exception ex)
 		{
