@@ -7,6 +7,7 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
+#include <string>
 
 namespace Retro3D
 {
@@ -20,11 +21,15 @@ namespace Retro3D
 
 	private:
 		bool mHasStarted = false;
+		std::string mActorName = "";
 
 	public:
 		Actor();
 		~Actor();
 		inline Transform& GetTransform() { return mTransform; }
+
+		void SetActorName(const std::string& arg_name) { mActorName = arg_name; };
+		std::string GetActorName() const { return mActorName; };
 
 		void AddComponent(Component* comp);
 

@@ -32,7 +32,15 @@ namespace Retro3D
 			}
 			std::string strScript((std::istreambuf_iterator<char>(fileStream)),std::istreambuf_iterator<char>());
 
-			mChaiScript->eval(strScript);
+			try
+			{
+				mChaiScript->eval(strScript);
+			}
+			catch (std::exception ex)
+			{
+				LOG_ERROR() << "Failed to evaluate script: " << arg_file << " - " << ex.what();
+				return;
+			}
 			mRegisteredScripts.insert(arg_file);
 			LOG_INFO() << "Loaded script file: " << arg_file;
 		}

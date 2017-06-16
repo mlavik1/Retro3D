@@ -12,6 +12,7 @@
 #include "input_manager.h"
 #include "script_manager.h"
 #include "config_reader.h"
+#include "world.h"
 
 namespace Retro3D
 {
@@ -48,6 +49,8 @@ namespace Retro3D
 		//arg_chaiscript->add(chaiscript::constructor<Actor()>(), "Actor");
 		arg_chaiscript->add(chaiscript::fun(&Actor::AddComponent), "AddComponent");
 		arg_chaiscript->add(chaiscript::fun(&Actor::GetTransform), "GetTransform");
+		arg_chaiscript->add(chaiscript::fun(&Actor::SetActorName), "SetActorName");
+		arg_chaiscript->add(chaiscript::fun(&Actor::GetActorName), "GetActorName");
 
 		arg_chaiscript->add(chaiscript::user_type<Player>(), "Player");
 
@@ -65,6 +68,11 @@ namespace Retro3D
 
 		arg_chaiscript->add(chaiscript::user_type<CameraComponent>(), "CameraComponent");
 		arg_chaiscript->add(chaiscript::base_class<Component, CameraComponent>());
+
+
+		// ObjectPtr
+		arg_chaiscript->add(chaiscript::user_type<ObjectPtr<Actor>>(), "ActorPtr");
+		arg_chaiscript->add(chaiscript::fun(&ObjectPtr<Actor>::Get), "Get");
 
 
 		// Managers
@@ -104,6 +112,15 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::fun(&scripthelper_CreateSpriteComponent), "CreateSpriteComponent");
 		arg_chaiscript->add(chaiscript::fun(&scripthelper_CreateCameraComponent), "CreateCameraComponent");
 
+		arg_chaiscript->add(chaiscript::fun([](const std::string& name)
+		{
+			for (ObjectPtr<Actor> actor : GGameEngine->GetWorld()->GetActors())
+			{
+				if (actor->GetActorName() == name)
+					return actor.Get();
+			}
+			return (Actor*)nullptr;
+		}), "GetActorByName");
 
 	}
 }
