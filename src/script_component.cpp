@@ -33,11 +33,9 @@ namespace Retro3D
 		if (mCanExecute)
 		{
 			chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
-			std::string createInstanceCall = GetScriptObjectName() + std::string(".OnStart()");
-			
 			try
 			{
-				chaiScriptCore->eval(createInstanceCall);
+				funcOnStart(mScriptObject); // TODO: only call if function exists
 			}
 			catch (std::exception ex)
 			{
@@ -51,20 +49,14 @@ namespace Retro3D
 		if (mCanExecute)
 		{
 			chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
-			// TODO: call functions the "right" way
-			std::string createInstanceCall = GetScriptObjectName() + std::string(".OnTick(") + std::to_string(GGameEngine->GetDeltaTime()) + std::string(");");
-			
 			try
 			{
-				chaiScriptCore->eval(createInstanceCall);
+				funcOnTick(mScriptObject, GGameEngine->GetDeltaTime()); // TODO: only call if function exists
 			}
 			catch (std::exception ex)
 			{
 				LOG_ERROR() << "Exception caught in ScriptComponent::OnTick: " << ex.what();
 			}
-
-			//auto func = chaiScriptCore->eval<std::function<void(float)> >("fun(dt) {" + GetScriptObjectName() + ".OnTick(dt); }");
-			//func(GGameEngine->GetDeltaTime());
 
 		}
 	}
@@ -81,11 +73,13 @@ namespace Retro3D
 			return false;
 
 		chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
-		std::string createInstanceCall = std::string("var ") + GetScriptObjectName() + std::string(" = ") + mScriptClass + std::string("();");
+		std::string createInstanceCall = mScriptClass + std::string("();");
 		try
 		{
-			chaiScriptCore->eval(createInstanceCall);
-			mScriptObject = GGameEngine->GetScriptManager()->GetChaiScriptCore()->eval(GetScriptObjectName());
+			mScriptObject = chaiScriptCore->eval(createInstanceCall); // will exist as long as mScriptObject
+			funcOnStart = chaiScriptCore->eval<std::function<void(chaiscript::Boxed_Value&)>>("OnStart");
+			funcOnTick = chaiScriptCore->eval<std::function<void(chaiscript::Boxed_Value&, float)>>("OnTick");
+
 		}
 		catch (std::exception ex)
 		{

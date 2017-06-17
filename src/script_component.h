@@ -18,6 +18,9 @@ namespace Retro3D
 
 		chaiscript::Boxed_Value mScriptObject;
 
+		std::function<void(chaiscript::Boxed_Value&)> funcOnStart;
+		std::function<void(chaiscript::Boxed_Value&, float)> funcOnTick;
+
 		bool createScriptInstance();
 
 	public:
