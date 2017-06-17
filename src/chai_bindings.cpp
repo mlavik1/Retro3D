@@ -65,11 +65,23 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::user_type<Player>(), "Player");
 
 
+		// ChaiScriptObject
+		arg_chaiscript->add(chaiscript::fun([](chaiscript::Boxed_Value boxedValue)
+		{
+			auto iter = ScriptComponent::ScriptObjectMap.find(boxedValue.get_ptr());
+			if (iter != ScriptComponent::ScriptObjectMap.end())
+			{
+				return (*iter).second;
+			}
+			return (ScriptComponent*)nullptr;
+		}), "GetScriptComponent");
+
 		// Components
 		arg_chaiscript->add(chaiscript::user_type<Component>(), "Component");
 
 		arg_chaiscript->add(chaiscript::user_type<ScriptComponent>(), "ScriptComponent");
 		arg_chaiscript->add(chaiscript::fun(&ScriptComponent::SetScriptClass), "SetScriptClass");
+		arg_chaiscript->add(chaiscript::fun(&ScriptComponent::GetScriptClassName), "GetScriptClassName");
 		arg_chaiscript->add(chaiscript::base_class<Component, ScriptComponent>());
 		arg_chaiscript->add(chaiscript::fun(&ScriptComponent::GetScriptObject), "GetScriptObject");
 

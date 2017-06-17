@@ -7,9 +7,18 @@ namespace Retro3D
 {
 	IMPLEMENT_CLASS(ScriptComponent);
 
+
+	std::unordered_map<void*, ScriptComponent*> ScriptComponent::ScriptObjectMap = std::unordered_map<void*, ScriptComponent*>();
+
 	ScriptComponent::ScriptComponent()
 	{
 
+	}
+
+	ScriptComponent::~ScriptComponent()
+	{
+		if (mCanExecute)
+			ScriptObjectMap.erase(mScriptObject.get_ptr());
 	}
 
 	void ScriptComponent::SetScriptClass(std::string arg_class)
@@ -71,7 +80,7 @@ namespace Retro3D
 		bool canCreate = GetScriptClassName() != "";
 		if (!canCreate)
 			return false;
-
+		
 		chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
 		std::string createInstanceCall = mScriptClass + std::string("();");
 		try
@@ -87,6 +96,8 @@ namespace Retro3D
 			return false;
 		}
 		
+		ScriptObjectMap[mScriptObject.get_ptr()] = this;
+
 		mCanExecute = true;
 		return true;
 	}

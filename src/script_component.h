@@ -4,7 +4,7 @@
 #include "component.h"
 #include "chaiscript/chaiscript.hpp"
 #include <string>
-
+#include <unordered_map>
 
 namespace Retro3D
 {
@@ -25,6 +25,7 @@ namespace Retro3D
 
 	public:
 		ScriptComponent();
+		~ScriptComponent();
 		void SetScriptClass(std::string arg_class);
 
 		std::string GetScriptObjectName();
@@ -34,6 +35,8 @@ namespace Retro3D
 
 		virtual void OnStart() override;
 		virtual void OnTick(float arg_deltatime) override;
+
+		static std::unordered_map<void*, ScriptComponent*> ScriptObjectMap; // TEMP: move to ScriptManager
 
 	};
 }

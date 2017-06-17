@@ -33,6 +33,13 @@ class TestClass
 					}
 				}
 			}
+			
+			// Test: Get ScriptComponent of this
+			var myScriptComp = this.GetScriptComponent(); // Get the ScriptComponent
+			if(!myScriptComp.is_var_null())
+			{
+				//print (myScriptComp.GetScriptClassName());
+			}
 		}
 		if(GetGameEngine().GetInputManager().GetKeyDown("w"))
 		{

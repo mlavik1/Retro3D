@@ -7,6 +7,8 @@
 
 namespace Retro3D
 {
+	class ScriptComponent;
+
 	class ScriptManager
 	{
 	private:
@@ -25,4 +27,3 @@ namespace Retro3D
 }
 
 #endif
-
