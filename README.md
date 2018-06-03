@@ -1,3 +1,5 @@
+(Has been moved to: https://github.com/sebgen/Dungeon-Crawler-2.5D)
+
 # Retro3D
 
 2.5D rendering project.
