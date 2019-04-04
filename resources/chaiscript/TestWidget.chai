@@ -1,0 +1,97 @@
+class TestWidget
+{
+	var imgHeaderBackground;
+	var txtHeaderTitle;
+	var btnQuit;
+	var txtFPSDisplay;
+	
+	var timeSinceLastFPSUpdate;
+	
+	var funcQuit;
+	
+	def TestWidget()
+	{
+		print("Creating TestWidget");
+		this.timeSinceLastFPSUpdate = 0.0f;
+		
+		this.funcQuit = fun()
+		{
+			print("Quitting");
+			GetGameEngine().Shutdown();
+		}
+	}
+	
+	def CreateContent()
+	{
+		print("Creating content for TestWidget");
+		
+		// Header background
+		this.imgHeaderBackground = CreateImageWidget();
+		this.imgHeaderBackground.SetPosition(0.0f, 0.0f);
+		this.imgHeaderBackground.SetSize(1.0f, 0.12f);
+		this.imgHeaderBackground.SetColour(Colour(0.0f, 0.0f, 1.0f, 0.3f));
+		this.GetWidget().AddChildWidget(this.imgHeaderBackground); // this.GetWidget() returns the Widget instance owned by this script
+		
+		// Header text
+		this.txtHeaderTitle = CreateTextInputWidget();
+		this.txtHeaderTitle.SetPosition(0.5f, 0.0f);
+		this.txtHeaderTitle.SetPivot(0.5f, 0.0f);
+		this.txtHeaderTitle.SetSize(0.6f, 0.9f);
+		this.txtHeaderTitle.SetText("Dungeon Crawler");
+		var textStyle = this.txtHeaderTitle.GetTextStyle();
+		textStyle.SetColour(Colour(1.0f, 1.0f, 1.0f));
+		this.txtHeaderTitle.SetTextStyle(textStyle);
+		this.imgHeaderBackground.AddChildWidget(this.txtHeaderTitle);
+		
+		// Quit button
+		this.btnQuit = CreateButtonWidget();
+		this.btnQuit.SetPosition(0.85f, 0.0f);
+		this.btnQuit.SetSize(0.15f, 0.07f);
+		this.btnQuit.SetText("Quit game");
+		var styleDefault = this.btnQuit.GetBackgroundStyle();
+		var styleOnHover = this.btnQuit.GetBackgroundStyleOnHover();
+		var styleOnClick = this.btnQuit.GetBackgroundStyleOnClick();
+		styleDefault.SetColour(Colour(0.7f, 0.7f, 0.7f));
+		styleOnHover.SetColour(Colour(0.0f, 0.7f, 0.0f));
+		styleOnClick.SetColour(Colour(0.0f, 0.0f, 0.7f));
+		this.btnQuit.SetBackgroundStyle(styleDefault);
+		this.btnQuit.SetBackgroundStyleOnHover(styleOnHover);
+		this.btnQuit.SetBackgroundStyleOnClick(styleOnClick);
+		this.btnQuit.BindOnButtonClicked(this.funcQuit);
+		this.GetWidget().AddChildWidget(this.btnQuit);
+		
+		// FPS Display
+		this.txtFPSDisplay = CreateTextWidget();
+		this.txtFPSDisplay.SetPosition(0.0f, 0.0f);
+		this.txtFPSDisplay.SetPivot(0.0f, 0.0f);
+		this.txtFPSDisplay.SetSize(0.15f, 0.07f);
+		this.txtFPSDisplay.SetText("FPS");
+		var textStyle2 = this.txtFPSDisplay.GetTextStyle();
+		textStyle2.SetColour(Colour(1.0f, 0.0f, 0.0f));
+		textStyle2.SetWrapText(false);
+		this.txtFPSDisplay.SetTextStyle(textStyle2);
+		this.GetWidget().AddChildWidget(this.txtFPSDisplay);
+	}
+	
+	def OnTick(deltatime)
+	{
+		// Update the FPS display twice a second
+		if(this.timeSinceLastFPSUpdate > 0.5f)
+		{
+			this.timeSinceLastFPSUpdate = 0.0f;
+			var fps = 1.0f / deltatime;
+			var txtFPSDisplay = "FPS: ${fps}";
+			this.txtFPSDisplay.SetText(txtFPSDisplay);
+		}
+		else
+		{
+			this.timeSinceLastFPSUpdate += deltatime;
+		}
+		
+	}
+	
+	def OnMouseButtonDown(arg_button)
+	{
+		print("MouseButtonDown called in TestWidget");
+	}
+};

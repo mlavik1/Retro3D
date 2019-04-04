@@ -24,6 +24,16 @@ class TestLevel
 		actor2.GetTransform().SetPosition(vec3(2.5f, 5.0f, 0.7f));
 		actor2.SetActorName("TestActor1");
 		
+		// Audio test:
+		var audioComp = CreateAudioComponent();
+		var audioTrack = audioComp.LoadAudio("resources//audio//file1.wav", "file1");
+		if(!audioTrack.is_var_null())
+		{
+			audioTrack.SetLooping(false);
+		}
+		actor2.AddComponent(audioComp);
+		audioComp.PlayAllAudioTracks();
+		
 		// test:
 		var fov = 0.0f;
 		var fovSet = GetGameEngine().GetGameConfig().GetFloat("camera", "fov", fov);

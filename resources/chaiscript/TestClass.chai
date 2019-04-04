@@ -13,6 +13,8 @@ class TestClass
 	
 	def OnTick(deltatime)
 	{
+		return;
+	
 		if(this.testVal <= 10)
 		{
 			print(GetGameEngine().GetDeltaTime());
@@ -21,6 +23,8 @@ class TestClass
 			
 			// Test: get ScriptTestActor (owner of this), and get its ScriptComponent, and the the ShriptComponent's ScriptObject (this)
 			var getActorTest = GetActorByName("ScriptTestActor");
+			var actorPtrTest = ActorPtr(getActorTest);
+			print(actorPtrTest.Get().GetActorName());
 			if(!getActorTest.is_var_null())
 			{
 				var scriptComp = getActorTest.GetScriptComponentByClass("TestClass");
@@ -38,7 +42,7 @@ class TestClass
 			var myScriptComp = this.GetScriptComponent(); // Get the ScriptComponent
 			if(!myScriptComp.is_var_null())
 			{
-				//print (myScriptComp.GetScriptClassName());
+				print (myScriptComp.GetScriptClassName());
 			}
 		}
 		if(GetGameEngine().GetInputManager().GetKeyDown("w"))

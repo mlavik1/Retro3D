@@ -1,8 +1,10 @@
-(Has been moved to: https://github.com/sebgen/Dungeon-Crawler-2.5D)
+# Dungeon Crawler
 
-# Retro3D
+2.5D retro game engine.
 
-2.5D rendering project.
+By Matias Lavik
+
+TRY IT HERE: http://dungeoncrawler.dx.am/ (Requires a browser with webassembly-support)
 
 ![screenshot](https://pbs.twimg.com/media/DAh1QhPXkAAH2Ea.jpg:large)
 
@@ -14,8 +16,6 @@ Features:
 - Level scripts and script components, using ChaiScript.
 - WebAssembly support (can run in browser).
 
-This is a hobby project, made for educational purposes.
-
 # How to build
 
 WINDOWS
@@ -26,7 +26,7 @@ WINDOWS
 - Configure
 - Build
 - Open Visual Studio project
-- Build Retro3D project (IN RELEASE CONFIGURATION - Debug will be very slow!)
+- Build and run the "Game" project (IN RELEASE CONFIGURATION - Debug will be very slow!)
 
 WEB ASSEMBLY
 - Make sure you have Emscripten installed (https://developer.mozilla.org/en-US/docs/WebAssembly/C_to_wasm)
@@ -34,3 +34,5 @@ WEB ASSEMBLY
 - Run emcc_generate.py
 - Run emcc_build.bat
 - Find your webpage in the "webbuild" sub folder
+
+Thanks to Sebastian Genlund for suggestions and useful feedback!
