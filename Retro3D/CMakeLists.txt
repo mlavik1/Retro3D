@@ -4,12 +4,16 @@ set(SourceDir ${PROJECT_SOURCE_DIR}/src)
 
 add_definitions(-DUNICODE)
 
+if(MSVC)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /bigobj")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
+endif(MSVC)
+
 # Gather c++ files
 file(GLOB_RECURSE SRC_FILES 
 	src/*.cpp
 	src/*.h
 )
-
 
 file(GLOB_RECURSE SRC_ACTOR
     "${SourceDir}/Actor/*.cpp"
@@ -143,8 +147,13 @@ IF(WIN32)
     set(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} /OPT:REF")
 ENDIF()
 
+if("${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
+    set(TARGET_ARCHITECTURE "x64")
+else()
+    set(TARGET_ARCHITECTURE "x86")
+endif()
 
-SET(LIB_DIR "${CMAKE_SOURCE_DIR}/libraries/Windows/x86")
+set(LIB_DIR "${CMAKE_SOURCE_DIR}/libraries/Windows/${TARGET_ARCHITECTURE}")
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
@@ -158,7 +167,7 @@ TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2main.lib)
 TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2.lib)
 TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2_ttf.lib)
 TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2_mixer.lib)
-
+	
 # ----- Copy DLLs to build folder ------------------------------------------------------------------
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     if (${CMAKE_GENERATOR} MATCHES "Visual Studio 14")
@@ -173,11 +182,11 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     file(MAKE_DIRECTORY ${DLL_TO_RELEASE})
     
     file(MAKE_DIRECTORY ${DLL_TO_DBG})
-    file(GLOB_RECURSE nativeLibsDebug ../bin/Windows/x86/Debug/*.dll)
-    file(GLOB_RECURSE nativeLibsRelease ../bin/Windows/x86/Debug/*.dll)
+    file(GLOB_RECURSE nativeLibsDebug ../bin/Windows/${TARGET_ARCHITECTURE}/Debug/*.dll)
+    file(GLOB_RECURSE nativeLibsRelease ../bin/Windows/${TARGET_ARCHITECTURE}/Release/*.dll)
     foreach(AddonFile ${nativeLibsDebug})
         get_filename_component(OUT_DIR ${AddonFile} DIRECTORY)
-        string(REGEX REPLACE "${CMAKE_CURRENT_LIST_DIR}/../bin/Windows/x86/Debug"
+        string(REGEX REPLACE "${CMAKE_CURRENT_LIST_DIR}/../bin/Windows/${TARGET_ARCHITECTURE}/Debug"
                 "" OUT_DIR ${OUT_DIR})
         add_custom_command(TARGET GET Retro3D PRE_BUILD
                 COMMAND ${CMAKE_COMMAND} -E
@@ -185,7 +194,7 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     endforeach(AddonFile)
     foreach(AddonFile ${nativeLibsRelease})
         get_filename_component(OUT_DIR ${AddonFile} DIRECTORY)
-        string(REGEX REPLACE "${CMAKE_CURRENT_LIST_DIR}/../bin/Windows/x86/Release"
+        string(REGEX REPLACE "${CMAKE_CURRENT_LIST_DIR}/../bin/Windows/${TARGET_ARCHITECTURE}/Release"
                 "" OUT_DIR ${OUT_DIR})
         add_custom_command(TARGET GET Retro3D PRE_BUILD
                 COMMAND ${CMAKE_COMMAND} -E
