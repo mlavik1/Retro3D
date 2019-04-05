@@ -9,7 +9,7 @@ namespace Retro3D
 
 	EmscriptenWindow::~EmscriptenWindow()
 	{
-		SDLWindow::~SDLWindow();
+		
 	}
 
 	void* EmscriptenWindow::GetOSWindowHandle()

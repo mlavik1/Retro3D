@@ -8,6 +8,10 @@ file(GLOB_RECURSE SRC_FILES
 	src/*.h
 )
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake/")
+
+#find_package(SDL2 REQUIRED)
+
 add_executable(Game ${SRC_FILES})
 
 ADD_DEPENDENCIES(Game Retro3D)

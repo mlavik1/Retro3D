@@ -5,7 +5,7 @@
 #include "API/SDL/sdl_render_target.h"
 #include "UI/Interfaces/widget_renderer.h"
 #include "Math/rectangle.h"
-#include <sdl2/SDL_rect.h>
+#include <SDL2/SDL_rect.h>
 #include <unordered_map>
 #include "Object/weak_objectptr.h"
 #include "Resource/texture_res.h"
