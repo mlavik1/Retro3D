@@ -220,7 +220,9 @@ namespace Retro3D
 		const glm::vec3 screenCentreWorld = camPos + camForward * d; // centre of the screen of the camera
 
 		/*** Trace in 2D, for each x ***/
+#ifdef _WIN32
 		#pragma omp parallel for // enable for better performance
+#endif
 		for (int x = 0; x < texWidth; x++)
 		{
 			const float relX = (float)x / texWidth;

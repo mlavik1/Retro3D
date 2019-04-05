@@ -9,6 +9,16 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 endif(MSVC)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake/")
+
+if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	find_package(SDL2 REQUIRED)
+	find_package(SDL2_image REQUIRED)
+	find_package(SDL2_mixer REQUIRED)
+	find_package(SDL2TTF REQUIRED)
+	find_package(Threads REQUIRED)
+endif()
+
 # Gather c++ files
 file(GLOB_RECURSE SRC_FILES 
 	src/*.cpp
@@ -162,11 +172,20 @@ if (OPENMP_FOUND)
 endif()
 
 
-TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2_image.lib)
-TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2main.lib)
-TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2.lib)
-TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2_ttf.lib)
-TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2_mixer.lib)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2_image.lib)
+	TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2main.lib)
+	TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2.lib)
+	TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2_ttf.lib)
+	TARGET_LINK_LIBRARIES(Retro3D ${LIB_DIR}/SDL2_mixer.lib)
+else()
+	target_link_libraries(Retro3D ${SDL2_LIBRARIES})
+	target_link_libraries(Retro3D ${SDL2_IMAGE_LIBRARIES})
+	target_link_libraries(Retro3D ${SDL2MIXER_LIBRARY})
+	target_link_libraries(Retro3D ${SDL2TTF_LIBRARY})
+	target_link_libraries(Retro3D dl)
+	target_link_libraries(Retro3D ${CMAKE_THREAD_LIBS_INIT})
+endif()
 	
 # ----- Copy DLLs to build folder ------------------------------------------------------------------
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")

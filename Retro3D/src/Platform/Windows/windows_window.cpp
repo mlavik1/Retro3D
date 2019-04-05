@@ -12,7 +12,7 @@ namespace Retro3D
 
 	WindowsWindow::~WindowsWindow()
 	{
-		SDLWindow::~SDLWindow();
+		
 	}
 
 	void* WindowsWindow::GetOSWindowHandle()

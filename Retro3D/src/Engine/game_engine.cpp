@@ -29,6 +29,8 @@
 #include "Platform/Windows/windows_window.h"
 #elif __EMSCRIPTEN__
 #include "Platform/Emscripten/emscripten_window.h"
+#else
+#include "API/SDL/sdl_window.h"
 #endif
 
 #ifdef __EMSCRIPTEN__
@@ -64,6 +66,10 @@ namespace Retro3D
 		EmscriptenWindow* emscriptenWindow = new EmscriptenWindow();
 		mMainWindow = emscriptenWindow;
 		mRenderTarget = emscriptenWindow;
+#else
+		SDLWindow* sdlWindow = new SDLWindow();
+		mMainWindow = sdlWindow;
+		mRenderTarget = sdlWindow;
 #endif
 
 		mFocusedWindow = nullptr;

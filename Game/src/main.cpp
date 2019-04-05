@@ -1,5 +1,4 @@
-#include "sdl2/SDL.h"
-#include "sdl2/sdl_image.h"
+#include "SDL2/SDL.h"
 #include "Misc/debug.h"
 
 #include "Engine/game_engine.h"

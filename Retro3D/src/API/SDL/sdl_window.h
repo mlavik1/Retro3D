@@ -42,9 +42,11 @@ namespace Retro3D
 		/** Gets the size (in pixels) of the Window. */
 		virtual void GetWindowSize(int& out_width, int& out_height) override;
 
-		virtual void* GetOSWindowHandle() = 0;
+		virtual void* GetOSWindowHandle() { return nullptr; }
 
 		virtual WindowBase* GetWindow() override;
+		
+		virtual bool HasFocus() { return true; };
 	};
 }
 

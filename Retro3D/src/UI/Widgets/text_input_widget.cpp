@@ -8,7 +8,7 @@ namespace Retro3D
 {
 	TextInputWidget::TextInputWidget()
 	{
-		TextWidget::TextWidget();
+		
 	}
 
 	void TextInputWidget::AddText(std::string arg_text)

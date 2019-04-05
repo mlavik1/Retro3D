@@ -3,6 +3,7 @@
 
 #include "object.h"
 #include <string>
+#include <cstring> // memcpy
 
 namespace Retro3D
 {

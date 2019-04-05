@@ -1,6 +1,6 @@
 #include "audio_manager.h"
 #include "audio_track.h"
-#include "sdl2/SDL_mixer.h"
+#include "SDL2/SDL_mixer.h"
 #include "Resource/audio_res.h"
 #include "Resource/res_ptr.h"
 #include "Engine/game_engine.h"
