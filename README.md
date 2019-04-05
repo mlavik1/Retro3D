@@ -1,6 +1,6 @@
-# Dungeon Crawler
+# 2.5D (pseudo-3D) game engine
 
-2.5D retro game engine.
+2.5D retro game engine. Old school software 3D rendering.
 
 By Matias Lavik
 
