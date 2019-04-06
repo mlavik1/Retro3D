@@ -18,7 +18,7 @@ Features:
 
 # How to build
 
-WINDOWS
+__WINDOWS__
 - Open CMake GUI (can download from here: https://cmake.org/download/)
 - In "Where is the srouce code", browse to the repository folder containing CMakeLists.txt
 - In "Where to build the binaries", chose any folder (i.e. subfolder "/build")
@@ -28,7 +28,12 @@ WINDOWS
 - Open Visual Studio project
 - Build and run the "Game" project (IN RELEASE CONFIGURATION - Debug will be very slow!)
 
-WEB ASSEMBLY
+__LINUX__
+- Run aptget.sh (or manually do apt-get on the dependencies)
+- Run CMake
+- Build the "Game" project (or make your own project based on that)
+
+__WEB ASSEMBLY__
 - Make sure you have Emscripten installed (https://developer.mozilla.org/en-US/docs/WebAssembly/C_to_wasm)
 - Also make sure you have newest version of Python 2.x installed
 - Run emcc_generate.py
