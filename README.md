@@ -1,6 +1,7 @@
 # 2.5D (pseudo-3D) game engine
 
 2.5D retro game engine. Old school software 3D rendering.
+
 Builds and runs on Windows, Linux and WebAssembly.
 
 By Matias Lavik
