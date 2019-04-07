@@ -4,7 +4,11 @@ jobs:
     vmImage: 'vs2015-win2012r2'
   steps:
   - script: cmake -G "Visual Studio 14" -DCMAKE_BUILD_TYPE=Debug .
-  - script: msbuild Retro3D.sln
+  - task: VSBuild@1
+    inputs:
+      platform: 'x86'
+      solution: 'Retro3D.sln'
+      configuration: 'Debug'
 - job: Linux
   pool:
     vmImage: 'ubuntu-16.04'
