@@ -1,0 +1,18 @@
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'vs2015-win2012r2'
+  steps:
+  - script: cmake -G "Visual Studio 14" -DCMAKE_BUILD_TYPE=Debug .
+- job: Linux
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - script: sudo apt-get update
+  - script: sudo apt-get install libsdl2-2.0
+  - script: sudo apt-get install libsdl2-dev
+  - script: sudo apt-get install libsdl2-image-dev
+  - script: sudo apt-get install libsdl2-ttf-dev
+  - script: sudo apt-get install libsdl2-mixer-dev
+  - script: cmake .
+  - script: make Retro3D

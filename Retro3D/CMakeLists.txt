@@ -2,6 +2,8 @@ project(Retro3D)
 
 set(SourceDir ${PROJECT_SOURCE_DIR}/src)
 
+cmake_policy(SET CMP0004 OLD)
+
 add_definitions(-DUNICODE)
 
 if(MSVC)

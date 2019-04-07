@@ -1,9 +1,11 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.7)
 
 # Set "Game" (projects that generates game executable) as startup project.
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "Game" )
 
 project(Retro3D)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 set(CMAKE_BUILD_TYPE Release FORCE)
 
