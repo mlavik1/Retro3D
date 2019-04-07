@@ -1,0 +1,12 @@
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'vs2015-win2012r2'
+  steps:
+  - script: cmake -G "Visual Studio 14" -DCMAKE_BUILD_TYPE=Debug .
+- job: Linux
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - script: ./aptget.sh
+  - script: cmake --build .
