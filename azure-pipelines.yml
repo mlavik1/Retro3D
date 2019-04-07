@@ -10,7 +10,7 @@ jobs:
   steps:
   - script: sudo apt-get update
   - script: sudo apt-get install libsdl2-2.0
-  - script: sudo apt-get install ibsdl2-dev
+  - script: sudo apt-get install libsdl2-dev
   - script: sudo apt-get libsdl2-image-dev
   - script: sudo apt-get libsdl2-ttf-dev
   - script: sudo apt-get libsdl2-mixer-dev
