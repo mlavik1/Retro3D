@@ -5,7 +5,7 @@ set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "Game" )
 
 project(Retro3D)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 set(CMAKE_BUILD_TYPE Release FORCE)
 
