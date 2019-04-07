@@ -8,5 +8,9 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - script: sudo ./aptget.sh
+  - script: sudo apt-get install libsdl2-2.0
+  - script: sudo apt-get install ibsdl2-dev
+  - script: sudo apt-get libsdl2-image-dev
+  - script: sudo apt-get libsdl2-ttf-dev
+  - script: sudo apt-get libsdl2-mixer-dev
   - script: cmake --build .
