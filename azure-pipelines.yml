@@ -14,4 +14,5 @@ jobs:
   - script: sudo apt-get install libsdl2-image-dev
   - script: sudo apt-get install libsdl2-ttf-dev
   - script: sudo apt-get install libsdl2-mixer-dev
-  - script: cmake --build .
+  - script: cmake .
+  - script: make Retro3D
