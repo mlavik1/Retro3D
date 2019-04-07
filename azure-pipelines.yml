@@ -4,6 +4,7 @@ jobs:
     vmImage: 'vs2015-win2012r2'
   steps:
   - script: cmake -G "Visual Studio 14" -DCMAKE_BUILD_TYPE=Debug .
+  - script: make Retro3D
 - job: Linux
   pool:
     vmImage: 'ubuntu-16.04'
