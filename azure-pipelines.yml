@@ -8,5 +8,5 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - script: ./aptget.sh
+  - script: sudo ./aptget.sh
   - script: cmake --build .
