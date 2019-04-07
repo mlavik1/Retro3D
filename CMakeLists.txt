@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.7)
 
 # Set "Game" (projects that generates game executable) as startup project.
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "Game" )
