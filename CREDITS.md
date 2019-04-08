@@ -2,4 +2,4 @@
 
 [Matias Lavik](https://github.com/mlavik1): Programming
 
-[ghostofiht](https://github.com/mlavik1): Logo and icon
+https://github.com/ghostofiht: Logo and icon
