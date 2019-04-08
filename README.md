@@ -42,4 +42,9 @@ __WEB ASSEMBLY__
 - Run emcc_build.bat
 - Find your webpage in the "webbuild" sub folder
 
+# Contributing
+
+Both code contributions, art contributions, bug reports and feature suggestions are more than welcome!
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
+
 Thanks to Sebastian Genlund for suggestions and useful feedback!
