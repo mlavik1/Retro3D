@@ -18,6 +18,7 @@
 #include <SDL2/SDL_mixer.h>
 #include "Audio/audio_manager.h"
 #include "Object/objectrefhandle.h"
+#include "Misc/path_utils.h"
 
 #ifdef _WIN32
 #include "Platform/Windows/windows_ime_manager.h"
@@ -41,8 +42,10 @@ namespace Retro3D
 {
 	GameEngine* GGameEngine = nullptr;
 
-	GameEngine::GameEngine()
+	GameEngine::GameEngine(std::string projDir)
 	{
+        mProjectDir = projDir;
+
 		SDL_Init(SDL_INIT_EVERYTHING);
 		atexit(AtExit);
 
@@ -76,7 +79,7 @@ namespace Retro3D
 		mCurrentLevel = nullptr;
 		mResourceManager = new ResourceManager();
 		mInputManager = new InputManager();
-		mScriptManager = new ScriptManager();
+		mScriptManager = new ScriptManager(GetScriptDirectory());
 		mWidgetRenderer = new SDLWidgetRenderer();
 		mWidgetManager = new WidgetManager();
 		mAudioManager = new AudioManager();
@@ -93,7 +96,7 @@ namespace Retro3D
 		SetCurrentLevel(new Level());
 
 		// Read game config
-		if (!mGameConfig.ReadFile("resources//config//GameConfig.ini"))
+		if (!mGameConfig.ReadFile(PathUtils::CombinePaths(GetResourceDirectory(), "/config/GameConfig.ini")))
 			LOG_ERROR() << "Failed to read config game file: ";
 
 		// Read resources.ini
@@ -131,10 +134,10 @@ namespace Retro3D
 		}
 	}
 
-	GameEngine* GameEngine::CreateGameEngine()
+	GameEngine* GameEngine::CreateGameEngine(std::string projDir)
 	{
 		LOG_INFO() << "Creating game engine";
-		GGameEngine = new GameEngine();
+		GGameEngine = new GameEngine(projDir);
 		return GGameEngine;
 	}
 
@@ -283,5 +286,20 @@ namespace Retro3D
 		mCurrentLevel = arg_level;
 		mSceneRenderer->SetLevel(arg_level);
 	}
+
+    std::string GameEngine::GetProjectDirectory()
+    {
+        return mProjectDir;
+    }
+
+    std::string GameEngine::GetResourceDirectory()
+    {
+        return PathUtils::CombinePaths(mProjectDir, "resources");
+    }
+
+    std::string GameEngine::GetScriptDirectory()
+    {
+        return PathUtils::CombinePaths(GetResourceDirectory(), "scripts");
+    }
 
 }

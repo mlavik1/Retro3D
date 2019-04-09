@@ -1,0 +1,124 @@
+class NewGameWidget
+{
+	var imgBackground;
+	var txtHeaderTitle;
+	
+	var buttonPanel;
+	var charInfoPanel;
+	
+	var txtInputCharName;
+	
+	var btnComplete;
+	var btnReturn;
+	
+	var funcComplete;
+	var funcReturn;
+
+	def NewGameWidget()
+	{
+		this.funcComplete = fun[this]()
+		{
+			print("Starting new game");
+			
+			GetGameManager().StartNewGame(this.txtInputCharName.GetText());
+			var hudWidget = CreateScriptWidget("HUDWidget");
+			GetGameEngine().GetWidgetManager().AddWidget(hudWidget);
+			GetGameEngine().GetWidgetManager().RemoveWidget(this.GetWidget());
+		}
+	
+		this.funcReturn = fun[this]()
+		{
+			var mainMenuWidget = CreateScriptWidget("MainMenuWidget");
+			GetGameEngine().GetWidgetManager().AddWidget(mainMenuWidget);
+			GetGameEngine().GetWidgetManager().RemoveWidget(this.GetWidget());
+		}
+	
+	}
+	
+	def CreateContent()
+	{
+		// Background
+		this.imgBackground = CreateImageWidget();
+		this.imgBackground.SetSize(1.0f, 1.0f);
+		this.imgBackground.SetImagePath("resources/gui/mainmenu/background.png");
+		this.GetWidget().AddChildWidget(this.imgBackground);
+	
+		// Header
+		this.txtHeaderTitle = CreateTextWidget();
+		this.txtHeaderTitle.SetPosition(0.5f, 0.0f);
+		this.txtHeaderTitle.SetPivot(0.5f, 0.0f);
+		this.txtHeaderTitle.SetSize(0.6f, 0.15f);
+		this.txtHeaderTitle.SetText("New Game");
+		var headerTextStyle = this.txtHeaderTitle.GetTextStyle();
+		headerTextStyle.SetFontSize(40);
+		this.txtHeaderTitle.SetTextStyle(headerTextStyle);
+		this.GetWidget().AddChildWidget(this.txtHeaderTitle);
+	
+		// Character info
+		this.charInfoPanel = CreateUniformGridPanelWidget();
+		this.charInfoPanel.SetPosition(0.5f, 0.85f);
+		this.charInfoPanel.SetDimension(2,4);
+		this.charInfoPanel.SetPivot(0.5f, 1.0f);
+		this.charInfoPanel.SetSize(0.5f, 0.65f);
+		this.charInfoPanel.SetAutoSize(true);
+		this.GetWidget().AddChildWidget(this.charInfoPanel);
+	
+		var lblInputCharName = CreateTextWidget();
+		var lblInputTextStyle = lblInputCharName.GetTextStyle();
+		lblInputTextStyle.SetFontSize(20);
+		lblInputCharName.SetText("Name:");
+		lblInputCharName.SetTextStyle(lblInputTextStyle);
+		this.charInfoPanel.AddWidgetToGridCell(lblInputCharName, 0, 0);
+	
+		this.txtInputCharName = CreateTextInputWidget();
+		this.txtInputCharName.SetText("マティアス");
+		this.txtInputCharName.SetTextStyle(lblInputTextStyle);
+		this.charInfoPanel.AddWidgetToGridCell(this.txtInputCharName, 1, 0);
+		
+		// Buttons
+		this.buttonPanel = CreateUniformGridPanelWidget();
+		this.buttonPanel.SetPosition(0.5f, 1.0f);
+		this.buttonPanel.SetDimension(3,1);
+		this.buttonPanel.SetPivot(0.5f, 1.0f);
+		this.buttonPanel.SetSize(0.6f, 0.15f);
+		this.buttonPanel.SetAutoSize(true);
+		this.GetWidget().AddChildWidget(this.buttonPanel);
+		
+		this.btnReturn = CreateButtonWidget();
+		this.btnReturn.SetText("Return");
+		this.btnReturn.BindOnButtonClicked(this.funcReturn);
+		this.buttonPanel.AddWidgetToGridCell(this.btnReturn, 0, 0);
+		
+		this.btnComplete = CreateButtonWidget();
+		this.btnComplete.SetText("Complete");
+		this.btnComplete.BindOnButtonClicked(this.funcComplete);
+		this.buttonPanel.AddWidgetToGridCell(this.btnComplete, 2, 0);
+		
+		var btnArray = [];
+		btnArray.push_back_ref(this.btnComplete);
+		btnArray.push_back_ref(this.btnReturn);
+		
+		for (currBtn : btnArray)
+		{
+			var styleDefault = currBtn.GetBackgroundStyle();
+			var styleOnHover = currBtn.GetBackgroundStyleOnHover();
+			var styleOnClick = currBtn.GetBackgroundStyleOnClick();
+			styleDefault.SetImagePath("resources/gui/mainmenu/button.png");
+			styleOnHover.SetImagePath("resources/gui/mainmenu/button_hovered.png");
+			styleOnClick.SetImagePath("resources/gui/mainmenu/button_pressed.png");
+			currBtn.SetBackgroundStyle(styleDefault);
+			currBtn.SetBackgroundStyleOnHover(styleOnHover);
+			currBtn.SetBackgroundStyleOnClick(styleOnClick);
+			
+			var textStyle = currBtn.GetTextWidget().GetTextStyle();
+			textStyle.SetFontSize(30);
+			currBtn.GetTextWidget().SetTextStyle(textStyle);
+		}
+		
+	}
+	
+	def OnTick(deltatime)
+	{
+	}
+	
+}

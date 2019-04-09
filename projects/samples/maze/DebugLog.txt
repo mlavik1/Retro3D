@@ -1,0 +1,3 @@
+ERROR: Exception caught in Widget::OnMouseButtonDown: Error with function dispatch, in E:\Prosjekt\Retro3D\Retro3D\src\UI\Widgets\widget.cpp, line 265
+ERROR: Exception caught in Widget::OnMouseButtonDown: Error with function dispatch, in E:\Prosjekt\Retro3D\Retro3D\src\UI\Widgets\widget.cpp, line 265
+ERROR: Exception caught in Widget::OnMouseButtonDown: Error with function dispatch, in E:\Prosjekt\Retro3D\Retro3D\src\UI\Widgets\widget.cpp, line 265

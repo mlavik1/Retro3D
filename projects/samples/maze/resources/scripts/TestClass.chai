@@ -1,0 +1,54 @@
+class TestClass
+{
+	var testVal;
+	def TestClass()
+	{
+		print("Creating TestClass");
+		this.testVal = 1;
+	}
+	
+	def OnStart()
+	{
+	}
+	
+	def OnTick(deltatime)
+	{
+		return;
+	
+		if(this.testVal <= 10)
+		{
+			print(GetGameEngine().GetDeltaTime());
+			print(this.testVal);
+			this.testVal = this.testVal + 1;
+			
+			// Test: get ScriptTestActor (owner of this), and get its ScriptComponent, and the the ShriptComponent's ScriptObject (this)
+			var getActorTest = GetActorByName("ScriptTestActor");
+			var actorPtrTest = ActorPtr(getActorTest);
+			print(actorPtrTest.Get().GetActorName());
+			if(!getActorTest.is_var_null())
+			{
+				var scriptComp = getActorTest.GetScriptComponentByClass("TestClass");
+				if(!scriptComp.is_var_null())
+				{
+					var scriptObj = scriptComp.GetScriptObject();
+					if(!scriptObj.is_var_null())
+					{
+						print(scriptObj.testVal); // Print TestClass::testVal
+					}
+				}
+			}
+			
+			// Test: Get ScriptComponent of this
+			var myScriptComp = this.GetScriptComponent(); // Get the ScriptComponent
+			if(!myScriptComp.is_var_null())
+			{
+				print (myScriptComp.GetScriptClassName());
+			}
+		}
+		if(GetGameEngine().GetInputManager().GetKeyDown("w"))
+		{
+			print("pressed w");
+		}
+		
+	}
+};

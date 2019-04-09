@@ -1,0 +1,15 @@
+class PlayerInfo
+{
+	var playerName;
+	var level;
+	var currentHealth;
+	var maxHealth;
+	
+	def PlayerInfo()
+	{
+		this.playerName = "Player";
+		this.level = 1;
+		this.currentHealth = 100;
+		this.maxHealth = 100;
+	}
+}

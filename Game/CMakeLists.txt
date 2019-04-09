@@ -10,22 +10,21 @@ file(GLOB_RECURSE SRC_FILES
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake/")
 
-#find_package(SDL2 REQUIRED)
-
 add_executable(Game ${SRC_FILES})
 
-ADD_DEPENDENCIES(Game Retro3D)
+add_dependencies(Game Retro3D)
 
 include_directories ("../Retro3D/src")
 include_directories ("../include")
 
 target_link_libraries(Game Retro3D)
 
-if(MSVC)
-    set_property(TARGET Game APPEND PROPERTY LINK_FLAGS /DEBUG)
-endif()
-
 IF(WIN32)
+	set_property(TARGET Game APPEND PROPERTY LINK_FLAGS /DEBUG)
+	#set_target_properties(Game PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "${RETRO3D_DEBUG_PROJECT}")
+	#Set working directory to the directory where "Resources" folder is located
+	set_target_properties(Game PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${RETRO3D_DEBUG_PROJECT}")
+	
     add_definitions("/Zi")
     #--------------------------------------------------------------------------
     # Since /Zi implies /OPT:NOREF, explicitly enable /OPT:REF on all
@@ -36,5 +35,3 @@ IF(WIN32)
     set(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} /OPT:REF")
 ENDIF()
 
-#Set working directory to the directory where "Resources" folder is located
-set_target_properties(Game PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${ROOT_DIR}")

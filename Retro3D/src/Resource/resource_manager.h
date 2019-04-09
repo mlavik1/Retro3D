@@ -15,6 +15,7 @@ Resource manager class.
 #include <typeinfo>
 #include <typeindex>
 #include <unordered_map>
+#include "Misc/path_utils.h"
 
 namespace Retro3D
 {
@@ -58,8 +59,10 @@ namespace Retro3D
 		* @return A resource pointer, that will be valid when loading is done.
 		*/
 		template <typename T>
-		ResPtr<T> LoadResource(const std::string& arg_path)
+		ResPtr<T> LoadResource(std::string arg_path)
 		{
+            arg_path = PathUtils::CombinePaths(GGameEngine->GetProjectDirectory(), arg_path);
+
 			const std::type_index& typeIndex = typeid(T);
 			T* resObj = (T*)getCahcedResource(typeIndex, arg_path);
 

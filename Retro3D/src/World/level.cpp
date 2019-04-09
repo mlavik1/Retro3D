@@ -9,6 +9,7 @@
 #include "Engine/game_engine.h"
 #include "Engine/script_manager.h"
 #include "chaiscript/chaiscript.hpp"
+#include "Misc/path_utils.h"
 
 namespace Retro3D
 {
@@ -30,7 +31,7 @@ namespace Retro3D
 	{
 		LOG_INFO() << "Loading level: " << arg_name;
 
-		std::string fullPath = std::string("resources//levels//") + std::string(arg_name) + std::string(".level");
+		std::string fullPath = PathUtils::CombinePaths(GGameEngine->GetResourceDirectory(), std::string("levels/") + std::string(arg_name) + std::string(".level"));
 
 		ConfigReader levelReader;
 		if (!levelReader.ReadFile(fullPath.c_str()))
@@ -113,7 +114,7 @@ namespace Retro3D
 			break;
 		}
 		
-		std::string fullPath = std::string("resources//levels//") + std::string(arg_filename);
+		std::string fullPath = PathUtils::CombinePaths(GGameEngine->GetResourceDirectory(), std::string("levels/") + std::string(arg_filename));
 		std::ifstream mapFile(fullPath.c_str());
 		if (!mapFile.is_open())
 		{

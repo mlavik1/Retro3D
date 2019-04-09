@@ -135,7 +135,6 @@ source_group("Platform\\Emscripten" FILES ${SRC_PLATFORM_EMSCRIPTEN})
 source_group("Platform\\Windows" FILES ${SRC_PLATFORM_WINDOWS})
 source_group("World" FILES ${SRC_WORLD})
 
-
 include_directories(${SourceDir})
 include_directories(include)
 include_directories ("../include")
