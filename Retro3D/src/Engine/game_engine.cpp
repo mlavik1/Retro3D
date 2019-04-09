@@ -77,7 +77,7 @@ namespace Retro3D
 
 		mFocusedWindow = nullptr;
 		mCurrentLevel = nullptr;
-		mResourceManager = new ResourceManager();
+		mResourceManager = new ResourceManager(GetResourceDirectory());
 		mInputManager = new InputManager();
 		mScriptManager = new ScriptManager(GetScriptDirectory());
 		mWidgetRenderer = new SDLWidgetRenderer();
