@@ -25,10 +25,10 @@ class TestLevel
 		
 		// Audio test:
 		var audioComp = CreateAudioComponent();
-		var audioTrack = audioComp.LoadAudio("resources/audio/file1.wav", "file1");
+		var audioTrack = audioComp.LoadAudio("resources/audio/music1.mp3", "music1");
 		if(!audioTrack.is_var_null())
 		{
-			audioTrack.SetLooping(false);
+			audioTrack.SetLooping(true);
 		}
 		actor2.AddComponent(audioComp);
 		audioComp.PlayAllAudioTracks();
