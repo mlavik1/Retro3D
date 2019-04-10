@@ -1,0 +1,63 @@
+class PlayerController
+{
+	var player;
+	var playerController;
+	var inputManager;
+
+	def PlayerController()
+	{
+		this.playerController = GetGameEngine().GetPlayerController();
+		this.player = GetGameEngine().GetPlayerController().GetPlayer();
+		this.inputManager = GetGameEngine().GetInputManager();
+	}
+	
+	def OnStart()
+	{
+	}
+	
+	def OnTick(deltatime)
+	{	
+		var trans = this.player.GetTransform();
+		var forward = trans.GetForwardVector();
+		var right = trans.GetRightVector();
+		
+		var speed = 2.0f;
+		var rotSpeed = 3.0f;
+		var vel = vec3(0.0f, 0.0f, 0.0f);
+		var rot = vec3(0.0f, 0.0f, 0.0f);
+		
+		if(this.inputManager.GetKey("w"))
+		{
+			vel = forward;
+		}
+		else if(this.inputManager.GetKey("s"))
+		{
+			vel = forward * -1.0f;
+		}
+		
+		if(this.inputManager.GetKey("d"))
+		{
+			vel = (vel + right) / 2.0f;
+		}
+		else if(this.inputManager.GetKey("a"))
+		{
+			vel = (vel + right * -1.0f) / 2.0f;
+		}
+		
+		if(this.inputManager.GetKey("e"))
+		{
+			rot = vec3(0.0f, 0.0f, -1.0f);
+		}
+		else if(this.inputManager.GetKey("q"))
+		{
+			rot = vec3(0.0f, 0.0f, 1.0f);
+		}
+		
+		vel = vel * speed * deltatime;
+		rot = rot * rotSpeed * deltatime;
+		
+		this.playerController.Move(vel);
+		this.playerController.Rotate(rot);
+	}
+	
+}

@@ -6,11 +6,10 @@ class TestLevel
 
 		var actorTest = CreateActor();
 		var scriptTest = CreateScriptComponent();
-		scriptTest.SetScriptClass("TestClass");
+		scriptTest.SetScriptClass("PlayerController");
 		actorTest.AddComponent(scriptTest);
 		actorTest.SetActorName("ScriptTestActor");
-
-
+		
 		var actor1 = CreateActor();
 		var spriteComp = CreateSpriteComponent();
 		spriteComp.SetTexture("resources/textures/grass1.png");

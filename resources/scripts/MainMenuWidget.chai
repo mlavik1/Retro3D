@@ -17,10 +17,11 @@ class MainMenuWidget
 	{
 		this.funcNewGame = fun[this]()
 		{
-			print("New game");
+			print("Starting new game");
 			
-			var newGameWidget = CreateScriptWidget("NewGameWidget");
-			GetGameEngine().GetWidgetManager().AddWidget(newGameWidget);
+			GetGameManager().StartNewGame();
+			var hudWidget = CreateScriptWidget("HUDWidget");
+			GetGameEngine().GetWidgetManager().AddWidget(hudWidget);
 			
 			GetGameEngine().GetWidgetManager().RemoveWidget(this.GetWidget());
 		}

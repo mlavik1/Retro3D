@@ -39,7 +39,7 @@ namespace Retro3D
 	void ScriptComponent::OnStart()
 	{
 		createScriptInstance(); // Create an instance of the class defined in script.
-		if (mCanExecute)
+		if (mCanExecute && funcOnStart != nullptr)
 		{
 			chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
 			try
@@ -55,7 +55,7 @@ namespace Retro3D
 
 	void ScriptComponent::OnTick(float arg_deltatime)
 	{
-		if (mCanExecute)
+		if (mCanExecute && funcOnTick != nullptr)
 		{
 			chaiscript::ChaiScript* chaiScriptCore = GGameEngine->GetScriptManager()->GetChaiScriptCore();
 			try
@@ -64,7 +64,7 @@ namespace Retro3D
 			}
 			catch (std::exception ex)
 			{
-				LOG_ERROR() << "Exception caught in ScriptComponent::OnTick: " << ex.what();
+				LOG_ERROR() << "Exception caught in " << this->mScriptClass << "::OnTick: " << ex.what();
 			}
 		}
 	}
@@ -85,8 +85,6 @@ namespace Retro3D
 		try
 		{
 			mScriptObject = chaiScriptCore->eval(createInstanceCall); // will exist as long as mScriptObject
-			funcOnStart = chaiScriptCore->eval<std::function<void(chaiscript::Boxed_Value&)>>("OnStart");
-			funcOnTick = chaiScriptCore->eval<std::function<void(chaiscript::Boxed_Value&, float)>>("OnTick");
 
 		}
 		catch (std::exception ex)
@@ -94,7 +92,15 @@ namespace Retro3D
 			LOG_ERROR() << "Failed to create script object for " << mScriptClass << ". Exception: " <<ex.what();
 			return false;
 		}
+
+        // Find OnStart
+        try { funcOnStart = chaiScriptCore->eval<std::function<void(chaiscript::Boxed_Value&)>>("OnStart");
+        } catch(std::exception ex) {}
 		
+        // Find OnTick
+        try { funcOnTick = chaiScriptCore->eval<std::function<void(chaiscript::Boxed_Value&, float)>>("OnTick");
+        } catch (std::exception ex) {}
+
 		ScriptObjectMap[mScriptObject.get_ptr()] = this;
 
 		mCanExecute = true;

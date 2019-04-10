@@ -22,12 +22,19 @@ namespace Retro3D
 		float mRotationSpeed = 2.5f;
 
 		/** Consumes movement input and calculates the requested velocity and rotation. */
-		void ConsumeInput();
+        void HandleMovement();
 
 	public:
+        PlayerController();
+
 		void SetPlayer(Player* arg_player);
 
-		inline Player* GetPlayer() { return mPlayer; }
+        void AddInput(const glm::vec3& dir);
+        void AddRotation(const glm::vec3& rot);
+        void Move(const glm::vec3& dir);
+        void Rotate(const glm::vec3& rot);
+
+		Player* GetPlayer() { return mPlayer; }
 
 		virtual void OnStart();
 		virtual void OnTick(float arg_deltatime);

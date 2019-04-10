@@ -13,8 +13,8 @@ namespace Retro3D
 		glm::mat4 mRotation;
 
 	public:
-		inline const glm::vec3& GetPosition() const { return mPosition; }
-		inline const glm::mat4& GetRotation() const { return mRotation; }
+		inline glm::vec3 GetPosition() const { return mPosition; }
+		inline glm::mat4 GetRotation() const { return mRotation; }
 
 		void SetPosition(glm::vec3 arg_pos);
 		void SetRotation(glm::mat4 arg_rot);

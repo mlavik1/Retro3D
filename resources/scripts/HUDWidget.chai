@@ -19,7 +19,8 @@ class HUDWidget
 	
 	def OnTick(deltatime)
 	{
-		this.txtPlayerName.SetText(GetGameManager().playerInfo.playerName);
+		//var playerName = GetGameManager().playerName;
+		//this.txtPlayerName.SetText("Player: ${this.txtPlayerName}");
 	}
 	
 }
