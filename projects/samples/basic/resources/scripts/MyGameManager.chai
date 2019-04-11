@@ -19,19 +19,25 @@ class MyGameManager
 	{
 		print("Starting new game");
 		
+		// Set level
 		GetGameEngine().GetCurrentLevel().LoadLevel("level1");
-		
+
+		// Create player
 		var player = CreatePlayer();
 		player.GetTransform().SetPosition(vec3(2.0f, 1.0f, 0.5f));
 		
 		var camComp = CreateCameraComponent();
 		player.AddComponent(camComp);
 		
-		//var playerScript = CreateScriptComponent();
-		//playerScript.SetScriptClass("PlayerController");
-		//player.AddComponent(playerScript);
+		var playerMovement = CreateScriptComponent();
+		playerMovement.SetScriptClass("PlayerMovement");
+		player.AddComponent(playerMovement);
 		
 		GetGameEngine().GetPlayerController().SetPlayer(player);
+		
+		// Create the HUD
+		var hudWidget = CreateScriptWidget("HUDWidget");
+		GetGameEngine().GetWidgetManager().AddWidget(hudWidget);
 	}
 	
 }

@@ -1,10 +1,10 @@
-class PlayerController
+class PlayerMovement
 {
 	var player;
 	var playerController;
 	var inputManager;
 
-	def PlayerController()
+	def PlayerMovement()
 	{
 		this.playerController = GetGameEngine().GetPlayerController();
 		this.player = GetGameEngine().GetPlayerController().GetPlayer();

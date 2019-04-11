@@ -2,4 +2,4 @@ MyGameManager.chai
 HUDWidget.chai
 MainMenuWidget.chai
 TestLevel.chai
-PlayerController.chai
+PlayerMovement.chai

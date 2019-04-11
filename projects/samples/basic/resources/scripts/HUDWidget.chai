@@ -14,13 +14,12 @@ class HUDWidget
 		this.txtPlayerName.SetPivot(0.0f, 0.0f);
 		this.txtPlayerName.SetSize(0.1f, 0.05f);
 		this.GetWidget().AddChildWidget(this.txtPlayerName);
-		
 	}
 	
 	def OnTick(deltatime)
 	{
-		//var playerName = GetGameManager().playerName;
-		//this.txtPlayerName.SetText("Player: ${this.txtPlayerName}");
+		var playerName = GetGameManager().playerName;
+		this.txtPlayerName.SetText("Player: ${playerName}");
 	}
 	
 }

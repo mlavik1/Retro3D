@@ -20,8 +20,6 @@ class MainMenuWidget
 			print("Starting new game");
 			
 			GetGameManager().StartNewGame();
-			var hudWidget = CreateScriptWidget("HUDWidget");
-			GetGameEngine().GetWidgetManager().AddWidget(hudWidget);
 			
 			GetGameEngine().GetWidgetManager().RemoveWidget(this.GetWidget());
 		}

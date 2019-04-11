@@ -10,7 +10,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 set(CMAKE_BUILD_TYPE Release FORCE)
 
 set(RETRO3D_SHIPPING_BUILD OFF CACHE BOOL "Shipping build (with optimisations)")
-set(RETRO3D_DEBUG_PROJECT "${CMAKE_SOURCE_DIR}/projects/samples/maze" CACHE STRING "Debug project")
+set(RETRO3D_DEBUG_PROJECT "${CMAKE_SOURCE_DIR}/projects/samples/basic" CACHE STRING "Debug project")
 
 set(BUILD_ROOT "${CMAKE_SOURCE_DIR}/build")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
@@ -30,4 +30,3 @@ if(NOT RETRO3D_SHIPPING_BUILD)
 else()
 	add_definitions(-DRETRO3D_RETRO3D_SHIPPING_BUILD)
 endif()
-
