@@ -34,8 +34,10 @@ __WINDOWS__
 
 __LINUX__
 - Run aptget.sh (or manually do apt-get on the dependencies)
-- Run CMake
-- Build the "Game" project (or make your own project based on that)
+- Run CMake: `cmake .`
+- Build the "Game" project (or make your own project based on that): `make Game`
+- Go to "projects/samples" and copy the "resources" folder of the samle you want to use into the same folder as the build executable.
+- Run the executable: `./Game`
 
 __WEB ASSEMBLY__
 - Make sure you have Emscripten installed (https://developer.mozilla.org/en-US/docs/WebAssembly/C_to_wasm)
