@@ -1,4 +1,4 @@
-<p align="center"><img src="resources/logo/logotype.png" alt="Retro3D" height="160px"></p>
+<p align="center"><img src="Media/logo/logotype.png" alt="Retro3D" height="160px"></p>
 
 # 2.5D (pseudo-3D) game engine
 
