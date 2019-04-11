@@ -1,0 +1,25 @@
+class HUDWidget
+{
+	var txtPlayerName;
+
+	def HUDWidget()
+	{
+	
+	}
+	
+	def CreateContent()
+	{
+		this.txtPlayerName = CreateTextWidget();
+		this.txtPlayerName.SetPosition(0.0f, 0.0f);
+		this.txtPlayerName.SetPivot(0.0f, 0.0f);
+		this.txtPlayerName.SetSize(0.1f, 0.05f);
+		this.GetWidget().AddChildWidget(this.txtPlayerName);
+		
+	}
+	
+	def OnTick(deltatime)
+	{
+		this.txtPlayerName.SetText(GetGameManager().playerInfo.playerName);
+	}
+	
+}

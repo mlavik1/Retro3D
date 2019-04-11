@@ -2,10 +2,10 @@
 
 namespace Retro3D
 {
-	ResourceManager::ResourceManager()
+	ResourceManager::ResourceManager(std::string projectDir)
 		: mAsyncLoadThread([&] () { asyncLoadThread_Tick(); })
 	{
-
+        mProjectDirectory = projectDir;
 	}
 
 	Resource* ResourceManager::getCahcedResource(const std::type_index& arg_type, const std::string& arg_path)

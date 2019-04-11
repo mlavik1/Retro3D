@@ -15,6 +15,7 @@
 #include "Actor/actor.h"
 #include "Actor/player_controller.h" // TEMP
 #include <API/SDL/sdl_render_target.h>
+#include "Misc/path_utils.h"
 
 /* BEGIN: TEMP FOR TESTING */
 float camWidth = 0.2f;
@@ -107,14 +108,14 @@ namespace Retro3D
         // register all textures used in the level
 		for (auto textureKeyPair : mLevel->GetTextureMap())
 		{
-			std::string fullPath = std::string("resources//textures//") + textureKeyPair.second;
+			std::string fullPath = PathUtils::CombinePaths(GGameEngine->GetProjectDirectory(), textureKeyPair.second);
 			SDL_Surface* surface = IMG_Load(fullPath.c_str());
 			__AssertComment(surface != nullptr, std::string("Unable to load texture: " + fullPath)); // todo
 			mTextureSurfaceMap[textureKeyPair.first] = surface;
 		}
 		if (mLevel->GetSkyboxTexture() != "")
 		{
-			mSkyboxTexture = IMG_Load((std::string("resources//textures//") + mLevel->GetSkyboxTexture()).c_str());
+			mSkyboxTexture = IMG_Load(PathUtils::CombinePaths(GGameEngine->GetProjectDirectory(), mLevel->GetSkyboxTexture()).c_str());
 			__Assert(mSkyboxTexture != nullptr);
 		}
 

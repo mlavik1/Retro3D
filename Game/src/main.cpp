@@ -16,7 +16,14 @@ int main(int argc, char** argv)
 	LOG_INFO() << "Optimisations are disabled!";
 #endif
 
-	GameEngine* engine = GameEngine::CreateGameEngine();
+    std::string projectPath = "";
+    if (argc > 1)
+        projectPath = argv[1];
+
+    // TEMP TEST
+    //projectPath = "projects/samples/maze"; // TODO: REMOVE ME
+
+	GameEngine* engine = GameEngine::CreateGameEngine(projectPath);
 
 	engine->StartEngine();
     

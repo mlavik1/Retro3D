@@ -16,9 +16,10 @@ namespace Retro3D
 		std::set<std::string> mRegisteredScripts;
 
 		chaiscript::Boxed_Value mGameManagerObject;
+        std::string mDirectory;
 
 	public:
-		ScriptManager();
+		ScriptManager(std::string scriptDir);
 		~ScriptManager();
 
 		/** Loads a script file and registers its code for later use */

@@ -15,6 +15,8 @@ Resource manager class.
 #include <typeinfo>
 #include <typeindex>
 #include <unordered_map>
+#include "Misc/path_utils.h"
+#include <string>
 
 namespace Retro3D
 {
@@ -38,11 +40,12 @@ namespace Retro3D
 
 		Thread mAsyncLoadThread;
 		std::unordered_map<size_t, std::unordered_map<std::string, ResPtr<Resource>>> mCachedResources;
+        std::string mProjectDirectory;
 
 		Resource* getCahcedResource(const std::type_index& arg_type, const std::string& arg_path);
 
 	public:
-		ResourceManager();
+		ResourceManager(std::string projectDir);
 
 		/** Called when the engine starts */
 		void OnStart();
@@ -58,8 +61,10 @@ namespace Retro3D
 		* @return A resource pointer, that will be valid when loading is done.
 		*/
 		template <typename T>
-		ResPtr<T> LoadResource(const std::string& arg_path)
+		ResPtr<T> LoadResource(std::string arg_path)
 		{
+            arg_path = PathUtils::CombinePaths(mProjectDirectory, arg_path);
+
 			const std::type_index& typeIndex = typeid(T);
 			T* resObj = (T*)getCahcedResource(typeIndex, arg_path);
 

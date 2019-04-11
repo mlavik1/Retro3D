@@ -60,11 +60,12 @@ namespace Retro3D
 
 		float mDeltaTime = 0.1f;
 		bool mIsRunning;
+        std::string mProjectDir;
 
 		std::function<void(float)> mTickCallback = nullptr;
 
 		// Constructor
-		GameEngine();
+		GameEngine(std::string projDir);
 		~GameEngine();
 
 		static void AtExit();
@@ -75,7 +76,7 @@ namespace Retro3D
 		* This will set the global GGameEngine instance.
 		* @return A pointer to the newly created GGameEngine
 		*/
-		static GameEngine* CreateGameEngine();
+		static GameEngine* CreateGameEngine(std::string projDir);
 
 	public:
 		/** Starts the game engine */
@@ -112,7 +113,11 @@ namespace Retro3D
 		inline IWidgetRenderer* GetWidgetRenderer() { return mWidgetRenderer; }
 		inline InputMethodManager* GetInputMethodManager() { return mInputMethodManager; }
 		inline WindowBase* GetFocusedWindow() { return mFocusedWindow; }
-	};
+
+        std::string GetProjectDirectory();
+        std::string GetResourceDirectory();
+        std::string GetScriptDirectory();
+    };
 }
 
 namespace Retro3D

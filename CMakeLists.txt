@@ -9,7 +9,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 set(CMAKE_BUILD_TYPE Release FORCE)
 
-set(SHIPPING_BUILD OFF CACHE BOOL "Shipping build (with optimisations)")
+set(RETRO3D_SHIPPING_BUILD OFF CACHE BOOL "Shipping build (with optimisations)")
+set(RETRO3D_DEBUG_PROJECT "${CMAKE_SOURCE_DIR}/projects/samples/basic" CACHE STRING "Debug project")
 
 set(BUILD_ROOT "${CMAKE_SOURCE_DIR}/build")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
@@ -22,11 +23,10 @@ IF(WIN32)
 	add_definitions(-DUNICODE)
 endif()
 
-if(NOT SHIPPING_BUILD)
-	message("Disabling optimisations, since SHIPPING_BUILD is OFF")
+if(NOT RETRO3D_SHIPPING_BUILD)
+	message("Disabling optimisations, since RETRO3D_SHIPPING_BUILD is OFF")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 	add_definitions(-DRETRO3D_OPTIMISATIONS_DISABLED)
 else()
-	add_definitions(-DRETRO3D_SHIPPING_BUILD)
+	add_definitions(-DRETRO3D_RETRO3D_SHIPPING_BUILD)
 endif()
-

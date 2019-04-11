@@ -41,7 +41,7 @@ namespace Retro3D
 
 	void ChaiBindings::AddBindings(chaiscript::ChaiScript* arg_chaiscript)
 	{
-		arg_chaiscript->add(chaiscript::user_type<GameEngine>(), "GameEngine");
+		arg_chaiscript->add(chaiscript::user_type<GameEngine>(), "R3DGameEngine");
 		arg_chaiscript->add(chaiscript::fun(&GameEngine::Shutdown), "Shutdown");
 		arg_chaiscript->add(chaiscript::fun(&GameEngine::GetDeltaTime), "GetDeltaTime");
 		arg_chaiscript->add(chaiscript::fun(&GameEngine::GetPlayerController), "GetPlayerController");
@@ -52,7 +52,7 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::fun(&GameEngine::GetAudioManager), "GetAudioManager");
 		arg_chaiscript->add(chaiscript::fun(&GameEngine::GetGameConfig), "GetGameConfig");
 
-		arg_chaiscript->add(chaiscript::user_type<Level>(), "Level");
+		arg_chaiscript->add(chaiscript::user_type<Level>(), "R3DLevel");
 		arg_chaiscript->add(chaiscript::fun(&Level::LoadLevel), "LoadLevel");
 
 		
@@ -71,12 +71,16 @@ namespace Retro3D
 
 
 		// Actors
-		arg_chaiscript->add(chaiscript::user_type<Actor>(), "Actor");
+		arg_chaiscript->add(chaiscript::user_type<Actor>(), "R3DActor");
 		//arg_chaiscript->add(chaiscript::constructor<Actor()>(), "Actor");
 		arg_chaiscript->add(chaiscript::fun(&Actor::AddComponent), "AddComponent");
-		arg_chaiscript->add(chaiscript::fun(&Actor::GetTransform), "GetTransform");
 		arg_chaiscript->add(chaiscript::fun(&Actor::SetActorName), "SetActorName");
 		arg_chaiscript->add(chaiscript::fun(&Actor::GetActorName), "GetActorName");
+        // ChaiScriptObject
+        arg_chaiscript->add(chaiscript::fun([](Actor & obj)
+        {
+            return &obj.GetTransform();
+        }), "GetTransform");
 		arg_chaiscript->add(chaiscript::fun([](Actor & o, std::string arg_name)
 		{
 			for (ScriptComponent* comp : o.GetComponents<ScriptComponent>())
@@ -88,13 +92,15 @@ namespace Retro3D
 		}), "GetScriptComponentByClass");
 
 		// Player
-		arg_chaiscript->add(chaiscript::user_type<Player>(), "Player");
+		arg_chaiscript->add(chaiscript::user_type<Player>(), "R3DPlayer");
 		arg_chaiscript->add(chaiscript::base_class<Actor, Player>());
 
 		// PlayerController
-		arg_chaiscript->add(chaiscript::user_type<PlayerController>(), "PlayerController");
+		arg_chaiscript->add(chaiscript::user_type<PlayerController>(), "R3DPlayerController");
 		arg_chaiscript->add(chaiscript::fun(&PlayerController::GetPlayer), "GetPlayer");
 		arg_chaiscript->add(chaiscript::fun(&PlayerController::SetPlayer), "SetPlayer");
+        arg_chaiscript->add(chaiscript::fun(&PlayerController::Move), "Move");
+        arg_chaiscript->add(chaiscript::fun(&PlayerController::Rotate), "Rotate");
 
 
 		// ChaiScriptObject
@@ -109,22 +115,22 @@ namespace Retro3D
 		}), "GetScriptComponent");
 
 		// Components
-		arg_chaiscript->add(chaiscript::user_type<Component>(), "Component");
+		arg_chaiscript->add(chaiscript::user_type<Component>(), "R3DComponent");
 
-		arg_chaiscript->add(chaiscript::user_type<ScriptComponent>(), "ScriptComponent");
+		arg_chaiscript->add(chaiscript::user_type<ScriptComponent>(), "R3DScriptComponent");
 		arg_chaiscript->add(chaiscript::fun(&ScriptComponent::SetScriptClass), "SetScriptClass");
 		arg_chaiscript->add(chaiscript::fun(&ScriptComponent::GetScriptClassName), "GetScriptClassName");
 		arg_chaiscript->add(chaiscript::base_class<Component, ScriptComponent>());
 		arg_chaiscript->add(chaiscript::fun(&ScriptComponent::GetScriptObject), "GetScriptObject");
 
-		arg_chaiscript->add(chaiscript::user_type<SpriteComponent>(), "SpriteComponent");
+		arg_chaiscript->add(chaiscript::user_type<SpriteComponent>(), "R3DSpriteComponent");
 		arg_chaiscript->add(chaiscript::fun(&SpriteComponent::SetTexture), "SetTexture");
 		arg_chaiscript->add(chaiscript::base_class<Component, SpriteComponent>());
 
-		arg_chaiscript->add(chaiscript::user_type<CameraComponent>(), "CameraComponent");
+		arg_chaiscript->add(chaiscript::user_type<CameraComponent>(), "R3DCameraComponent");
 		arg_chaiscript->add(chaiscript::base_class<Component, CameraComponent>());
 
-		arg_chaiscript->add(chaiscript::user_type<AudioComponent>(), "AudioComponent");
+		arg_chaiscript->add(chaiscript::user_type<AudioComponent>(), "R3DAudioComponent");
 		arg_chaiscript->add(chaiscript::base_class<Component, AudioComponent>());
 		arg_chaiscript->add(chaiscript::fun(&AudioComponent::LoadAudio), "LoadAudio");
 		arg_chaiscript->add(chaiscript::fun(&AudioComponent::PlayAudioTrack), "PlayAudioTrack");
@@ -139,7 +145,7 @@ namespace Retro3D
 
 
 		// Managers
-		arg_chaiscript->add(chaiscript::user_type<InputManager>(), "InputManager");
+		arg_chaiscript->add(chaiscript::user_type<InputManager>(), "R3DInputManager");
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKey_String), "GetKey");
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKeyDown_String), "GetKeyDown");
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKeyUp_String), "GetKeyUp");
@@ -147,28 +153,28 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetMouseReleased), "GetMouseReleased");
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetMousePosition), "GetMousePosition");
 
-		arg_chaiscript->add(chaiscript::user_type<ScriptManager>(), "ScriptManager");
+		arg_chaiscript->add(chaiscript::user_type<ScriptManager>(), "R3DScriptManager");
 		arg_chaiscript->add(chaiscript::fun(&ScriptManager::RegisterScript), "RegisterScript");
 
-		arg_chaiscript->add(chaiscript::user_type<WidgetManager>(), "WidgetManager");
+		arg_chaiscript->add(chaiscript::user_type<WidgetManager>(), "R3DWidgetManager");
 		arg_chaiscript->add(chaiscript::fun(&WidgetManager::AddWidget), "AddWidget");
 		arg_chaiscript->add(chaiscript::fun(&WidgetManager::RemoveWidget), "RemoveWidget");
 
-		arg_chaiscript->add(chaiscript::user_type<AudioManager>(), "AudioManager");
+		arg_chaiscript->add(chaiscript::user_type<AudioManager>(), "R3DAudioManager");
 		arg_chaiscript->add(chaiscript::fun(&AudioManager::PlayAudioFile), "PlayAudioFile");
 
-		arg_chaiscript->add(chaiscript::user_type<AudioTrack>(), "AudioTrack");
+		arg_chaiscript->add(chaiscript::user_type<AudioTrack>(), "R3DAudioTrack");
 		arg_chaiscript->add(chaiscript::fun(&AudioTrack::SetLooping), "SetLooping");
 
 
 		// Widgets
-		arg_chaiscript->add(chaiscript::user_type<Widget>(), "Widget");
+		arg_chaiscript->add(chaiscript::user_type<Widget>(), "R3DWidget");
 		arg_chaiscript->add(chaiscript::fun(&Widget::AddVisual), "AddVisual");
 		arg_chaiscript->add(chaiscript::fun(&Widget::AddChildWidget), "AddChildWidget");
 		arg_chaiscript->add(chaiscript::fun([](Widget& widget, const float x, const float y) { widget.SetSize(x, y); }), "SetSize");
 		arg_chaiscript->add(chaiscript::fun([](Widget& widget, const float x, const float y) { widget.SetPosition(x, y); }), "SetPosition");
 		arg_chaiscript->add(chaiscript::fun([](Widget& widget, const float x, const float y) { widget.SetPivot(x, y); }), "SetPivot");
-		arg_chaiscript->add(chaiscript::fun(&Widget::GetVerticalPositioning), "GetVerticalPositioning");
+		arg_chaiscript->add(chaiscript::fun(&Widget::GetVerticalPositioning), "GetVerticaglPositioning");
 		arg_chaiscript->add(chaiscript::fun(&Widget::SetVerticalPositioning), "SetVerticalPositioning");
 		arg_chaiscript->add(chaiscript::fun(&Widget::GetHorizontalPositioning), "GetHorizontalPositioning");
 		arg_chaiscript->add(chaiscript::fun(&Widget::SetHorizontalPositioning), "SetHorizontalPositioning");
@@ -180,19 +186,19 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::fun(&Widget::BindOnMousePressed), "BindOnMousePressed");
 		arg_chaiscript->add(chaiscript::fun(&Widget::BindOnMouseReleased), "BindOnMouseReleased");
 
-		arg_chaiscript->add(chaiscript::user_type<ImageWidget>(), "ImageWidget");
+		arg_chaiscript->add(chaiscript::user_type<ImageWidget>(), "R3DImageWidget");
 		arg_chaiscript->add(chaiscript::fun(&ImageWidget::SetColour), "SetColour");
 		arg_chaiscript->add(chaiscript::fun(&ImageWidget::SetImagePath), "SetImagePath");
 		arg_chaiscript->add(chaiscript::base_class<Widget, ImageWidget>());
 
-		arg_chaiscript->add(chaiscript::user_type<TextWidget>(), "TextWidget");
+		arg_chaiscript->add(chaiscript::user_type<TextWidget>(), "R3DTextWidget");
 		arg_chaiscript->add(chaiscript::base_class<Widget, TextWidget>());
 		arg_chaiscript->add(chaiscript::fun(&TextWidget::GetText), "GetText");
 		arg_chaiscript->add(chaiscript::fun(&TextWidget::SetText), "SetText");
 		arg_chaiscript->add(chaiscript::fun(&TextWidget::GetTextStyle), "GetTextStyle");
 		arg_chaiscript->add(chaiscript::fun(&TextWidget::SetTextStyle), "SetTextStyle");
 
-		arg_chaiscript->add(chaiscript::user_type<TextInputWidget>(), "TextInputWidget");
+		arg_chaiscript->add(chaiscript::user_type<TextInputWidget>(), "R3DTextInputWidget");
 		arg_chaiscript->add(chaiscript::base_class<Widget, TextInputWidget>());
 		arg_chaiscript->add(chaiscript::base_class<TextWidget, TextInputWidget>());
 
@@ -258,19 +264,47 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::user_type<Transform>(), "Transform");
 		arg_chaiscript->add(chaiscript::fun(&Transform::GetPosition), "GetPosition");
 		arg_chaiscript->add(chaiscript::fun(&Transform::SetPosition), "SetPosition");
+        arg_chaiscript->add(chaiscript::fun(&Transform::GetForwardVector), "GetForwardVector");
+        arg_chaiscript->add(chaiscript::fun(&Transform::GetUpVector), "GetUpVector");
+        arg_chaiscript->add(chaiscript::fun(&Transform::GetRightVector), "GetRightVector");
 
 
-		// glm
+		// glm::vec3
 		arg_chaiscript->add(chaiscript::user_type<glm::vec3>(), "vec3");
 		arg_chaiscript->add(chaiscript::constructor<glm::vec3(float, float, float)>(), "vec3");
-		arg_chaiscript->add(chaiscript::fun([](glm::vec3 a, glm::vec3 b) { return a + b; }), "+");
+        arg_chaiscript->add(chaiscript::constructor<glm::vec3(const glm::vec3&)>(), "vec3");
+        arg_chaiscript->add(chaiscript::constructor<glm::vec3()>(), "vec3");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3 a, glm::vec3 b) { return a + b; }), "+");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3 a, glm::vec3 b) { return a - b; }), "-");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3 a, glm::vec3 b) { return a * b; }), "*");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3 a, glm::vec3 b) { return a / b; }), "/");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3 a, float b) { return a * b; }), "*");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3 a, float b) { return a / b; }), "/");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3& a,const glm::vec3& b) { a = b; }), "=");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3& a, const glm::vec3& b) { a *= b; }), "*=");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3& a, const glm::vec3& b) { a /= b; }), "/=");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3& a, const glm::vec3& b) { a += b; }), "+=");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3& a, const glm::vec3& b) { a -= b; }), "-=");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3& a, float b) { a *= b; }), "*=");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec3& a, float b) { a /= b; }), "/=");
 
-
-		// glm
+		// glm::vec2
 		arg_chaiscript->add(chaiscript::user_type<glm::vec2>(), "vec2");
 		arg_chaiscript->add(chaiscript::constructor<glm::vec2(float, float)>(), "vec2");
-		arg_chaiscript->add(chaiscript::fun([](glm::vec2 a, glm::vec2 b) { return a + b; }), "+");
-
+        arg_chaiscript->add(chaiscript::constructor<glm::vec2(const glm::vec2&)>(), "vec2");
+        arg_chaiscript->add(chaiscript::constructor<glm::vec2()>(), "vec2");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec2 a, glm::vec2 b) { return a + b; }), "+");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec2 a, glm::vec2 b) { return a - b; }), "-");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec2 a, glm::vec2 b) { return a * b; }), "*");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec2 a, glm::vec2 b) { return a / b; }), "/");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec2 a, float b) { return a * b; }), "*");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec2& a, const glm::vec2& b) { a = b; }), "=");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec2& a, const glm::vec2& b) { a *= b; }), "*=");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec2& a, const glm::vec2& b) { a /= b; }), "/=");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec2& a, const glm::vec2& b) { a += b; }), "+=");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec2& a, const glm::vec2& b) { a -= b; }), "-=");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec2& a, float b) { a *= b; }), "*=");
+        arg_chaiscript->add(chaiscript::fun([](glm::vec2& a, float b) { a /= b; }), "/=");
 
 		// helper functions
 		arg_chaiscript->add(chaiscript::fun(&scripthelper_getengine), "GetGameEngine");

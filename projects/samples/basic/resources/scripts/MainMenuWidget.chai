@@ -1,0 +1,107 @@
+class MainMenuWidget
+{
+	var txtHeaderTitle;
+	var imgBackground;
+
+	var mainPanel;
+	var imgMainPanel;
+
+	var btnNewGame;
+	var btnOptions;
+	var btnExit;
+	
+	var funcNewGame;
+	var funcExit;
+
+	def MainMenuWidget()
+	{
+		this.funcNewGame = fun[this]()
+		{
+			print("Starting new game");
+			
+			GetGameManager().StartNewGame();
+			
+			GetGameEngine().GetWidgetManager().RemoveWidget(this.GetWidget());
+		}
+	
+		this.funcExit = fun()
+		{
+			print("Exiting game");
+			GetGameEngine().Shutdown();
+		}
+	
+	}
+	
+	def CreateContent()
+	{
+		this.imgBackground = CreateImageWidget();
+		this.imgBackground.SetSize(1.0f, 1.0f);
+		this.imgBackground.SetImagePath("resources/gui/mainmenu/background.png");
+		this.GetWidget().AddChildWidget(this.imgBackground);
+	
+		this.txtHeaderTitle = CreateTextWidget();
+		this.txtHeaderTitle.SetPosition(0.5f, 0.0f);
+		this.txtHeaderTitle.SetPivot(0.5f, 0.0f);
+		this.txtHeaderTitle.SetSize(0.6f, 0.15f);
+		this.txtHeaderTitle.SetText("Dungeon Crawler");
+		var headerTextStyle = this.txtHeaderTitle.GetTextStyle();
+		headerTextStyle.SetFontSize(40);
+		this.txtHeaderTitle.SetTextStyle(headerTextStyle);
+		this.GetWidget().AddChildWidget(this.txtHeaderTitle);
+	
+		this.mainPanel = CreateUniformGridPanelWidget();
+		this.mainPanel.SetPosition(0.5f, 0.6f);
+		this.mainPanel.SetDimension(1,6);
+		this.mainPanel.SetPivot(0.5f, 0.5f);
+		this.mainPanel.SetSize(0.4f, 0.9f);
+		this.mainPanel.SetAutoSize(true);
+		this.GetWidget().AddChildWidget(this.mainPanel);
+	
+		this.imgMainPanel = CreateImageWidget();
+		this.imgMainPanel.SetSize(1.0f, 1.0f);
+		this.imgMainPanel.SetImagePath("resources/gui/mainmenu/popup.png");
+		//this.mainPanel.AddChildWidget(this.imgMainPanel);
+	
+		this.btnNewGame = CreateButtonWidget();
+		this.btnNewGame.SetText("New Game");
+		this.btnNewGame.BindOnButtonClicked(this.funcNewGame);
+		this.mainPanel.AddWidgetToGridCell(this.btnNewGame, 0, 0);
+		
+		this.btnOptions = CreateButtonWidget();
+		this.btnOptions.SetText("Options");
+		this.mainPanel.AddWidgetToGridCell(this.btnOptions, 0, 1);
+		
+		this.btnExit = CreateButtonWidget();
+		this.btnExit.SetText("Exit");
+		this.btnExit.BindOnButtonClicked(this.funcExit);
+		this.mainPanel.AddWidgetToGridCell(this.btnExit, 0, 2);
+		
+		var btnArray = [];
+		btnArray.push_back_ref(this.btnNewGame);
+		btnArray.push_back_ref(this.btnOptions);
+		btnArray.push_back_ref(this.btnExit);
+		
+		for (currBtn : btnArray)
+		{
+			var styleDefault = currBtn.GetBackgroundStyle();
+			var styleOnHover = currBtn.GetBackgroundStyleOnHover();
+			var styleOnClick = currBtn.GetBackgroundStyleOnClick();
+			styleDefault.SetImagePath("resources/gui/mainmenu/button.png");
+			styleOnHover.SetImagePath("resources/gui/mainmenu/button_hovered.png");
+			styleOnClick.SetImagePath("resources/gui/mainmenu/button_pressed.png");
+			currBtn.SetBackgroundStyle(styleDefault);
+			currBtn.SetBackgroundStyleOnHover(styleOnHover);
+			currBtn.SetBackgroundStyleOnClick(styleOnClick);
+			
+			var textStyle = currBtn.GetTextWidget().GetTextStyle();
+			textStyle.SetFontSize(30);
+			currBtn.GetTextWidget().SetTextStyle(textStyle);
+		}
+		
+	}
+	
+	def OnTick(deltatime)
+	{
+	}
+	
+}
