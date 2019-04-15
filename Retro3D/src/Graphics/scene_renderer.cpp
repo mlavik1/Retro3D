@@ -191,6 +191,10 @@ namespace Retro3D
 
 		glm::vec3 camPos = mCameraComponent->GetCameraTransform().GetPosition();
 		glm::mat4 camRot = mCameraComponent->GetCameraTransform().GetRotation();
+        
+        // TODO (do before loop)
+        camPos.z = std::fminf(1.0f, camPos.z);
+        camPos.z = std::fmaxf(0.1f, camPos.z);
 
 		const std::string& skyboxTexture = mLevel->GetSkyboxTexture();
 		bool renderSkybox = skyboxTexture != "";
@@ -281,15 +285,25 @@ namespace Retro3D
 				}
 			}
 
-			const glm::vec3 currPosTop = glm::vec3(currPos.x, currPos.y, 1.0f);
-			const glm::vec3 dirToCurrPosTop = glm::normalize(currPosTop - camPos);
-			const float cosA = glm::dot(dirToCurrPosTop, camForward);
+            // TODO: Make this adjustable
+            const float wallHeight = 1.5f;
+
+            const float camScreenRatio = mTexHeight / camHeight;
+
+            // Get wall top position and project it onto the camera
+			const glm::vec3 currPosBottom = glm::vec3(currPos.x, currPos.y, 0.0);
+			const glm::vec3 dirToCurrPosBottom = glm::normalize(currPosBottom - camPos);
+			const float cosA = glm::dot(dirToCurrPosBottom, camForward);
 			const float dDivCosA = d / cosA;
-			const glm::vec3 currPosTopProjCam = camPos + dirToCurrPosTop * dDivCosA;
-			const float wallHalfHeight = currPosTopProjCam.z - camPos.z;
-			const float wallHeight = wallHalfHeight * 2.0f;
-			const int wallHeightScreenSpace = static_cast<int>((wallHeight / camHeight) * mTexHeight);
-			const int pixelsToSkip = mTexHeight - wallHeightScreenSpace;
+			const glm::vec3 currPosBottomProjCam = camPos + dirToCurrPosBottom * dDivCosA; // Wall top projected to camera
+            const float projZDist = (camPos.z - currPosBottomProjCam.z);
+            const float wallHeightCamSpace = projZDist / (camPos.z / wallHeight);
+			const int wallHeightScreenSpace = static_cast<int>(wallHeightCamSpace * camScreenRatio);
+            const int wallBottomScreenSpace = static_cast<int>(((camPos.z - currPosBottomProjCam.z) / camHeight + 0.5f) * mTexHeight);
+            const int wallTopScreenSpace = wallBottomScreenSpace - wallHeightScreenSpace;
+
+            const glm::vec3 wallBottomWorld = currPosBottom;
+            const glm::vec3 wallTopWorld = currPosBottom + wallHeight;
 
 			if (gridCellValue != 0)
 			{
@@ -300,13 +314,15 @@ namespace Retro3D
 				if (mLevel->IsInGrid(gridX, gridY))
 				{
 					/*** Draw wall ***/
-                    const int zMin = std::max(pixelsToSkip / 2, 0);
-					const int zMax = std::min(mTexHeight - pixelsToSkip / 2, mTexHeight);
+                    const int zMin = std::max(wallTopScreenSpace, 0);
+					const int zMax = std::min(wallBottomScreenSpace, mTexHeight - 1);
+                    assert(zMax >= zMin);
 					for (int z = zMin; z < zMax; z++)
 					{
 						const int offset = (mTexWidth * 4 * z) + x * 4;
 
-						const float realZ = 1.0f - ((float)(z - pixelsToSkip / 2) / wallHeightScreenSpace);
+                        const float tZ = (z - wallTopScreenSpace) / (float)(wallBottomScreenSpace - wallTopScreenSpace);
+                        const float realZ = wallTopWorld.z * tZ;;
 						const glm::vec2 uv = xAxisInters ? glm::vec2(currPos.y - gridY, 1.0f - realZ) : glm::vec2(currPos.x - gridX, 1.0f - realZ);
 						const Uint32 pixelColour = getpixel(wallTextureSurface, static_cast<int>(uv.x * wallTextureSurface->w), static_cast<int>(uv.y * wallTextureSurface->h));
 						const Uint8 r = pixelColour;
@@ -322,8 +338,7 @@ namespace Retro3D
 			}
 			
 			/*** Draw ceiling ***/
-			const int zMax = std::min(pixelsToSkip / 2, mTexHeight);
-			for (int z = 0; z < zMax; z++)
+			for (int z = 0; z <= wallTopScreenSpace; z++)
 			{
 				const float relZ = (float)z / mTexHeight;
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)
@@ -382,7 +397,7 @@ namespace Retro3D
 			}
 
 			/*** Draw floor ***/
-			for (int z = wallHeightScreenSpace + pixelsToSkip / 2; z < mTexHeight; z++)
+			for (int z = wallBottomScreenSpace; z < mTexHeight; z++)
 			{
 				const float relZ = (float)z / mTexHeight;
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)

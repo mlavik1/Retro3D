@@ -96,8 +96,9 @@ namespace Retro3D
 		SetCurrentLevel(new Level());
 
 		// Read game config
-		if (!mGameConfig.ReadFile(PathUtils::CombinePaths(GetResourceDirectory(), "/config/GameConfig.ini")))
-			LOG_ERROR() << "Failed to read config game file: ";
+        std::string configFilePath = PathUtils::CombinePaths(GetResourceDirectory(), "/config/GameConfig.ini");
+		if (!mGameConfig.ReadFile(configFilePath))
+			LOG_ERROR() << "Failed to read config game file: " << configFilePath;
 
 		// Read resources.ini
 	}
