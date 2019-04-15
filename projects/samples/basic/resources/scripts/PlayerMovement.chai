@@ -21,8 +21,8 @@ class PlayerMovement
 		var forward = trans.GetForwardVector();
 		var right = trans.GetRightVector();
 		
-		var speed = 2.0f;
-		var rotSpeed = 3.0f;
+		var speed = 4.0f;
+		var rotSpeed = 5.0f;
 		var vel = vec3(0.0f, 0.0f, 0.0f);
 		var rot = vec3(0.0f, 0.0f, 0.0f);
 		

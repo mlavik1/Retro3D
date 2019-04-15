@@ -20,9 +20,6 @@
 /* BEGIN: TEMP FOR TESTING */
 float camWidth = 0.2f;
 
-const int texWidth = 800;
-const int texHeight = 600;
-
 /* END: TEMP FOR TESTING */
 
 namespace Retro3D
@@ -60,27 +57,35 @@ namespace Retro3D
 	{
 		mRenderTexture = nullptr;
 
-		/*** Set up pixel arrays ***/
-		mClearPixels = std::vector<unsigned char>(texWidth * texHeight * 4, 0); // clear pixel array. "pixels" array is set to this before rendering
-		for (size_t i = 0; i < mClearPixels.size(); i++)
-		{
-			mClearPixels[i] = SDL_ALPHA_OPAQUE; // fill with 255, so we won't have to set the alpha when rendering
-		}
-		mPixels = mClearPixels; // pixel array containing the rendered scene
-
-		// Set up and clear the depth buffer
-		mClearDepthBuffer = std::vector<float>(texWidth, 0);
-		for (size_t i = 0; i < mClearDepthBuffer.size(); i++)
-		{
-			mClearDepthBuffer[i] = 10000.0f;
-		}
-		mDepthBuffer = mClearDepthBuffer;
+        SetResolution(320, 200);
 	}
 
 
 	SceneRenderer::~SceneRenderer()
 	{
 	}
+
+    void SceneRenderer::SetResolution(int xRes, int yRes)
+    {
+        mTexWidth = xRes;
+        mTexHeight = yRes;
+
+        /*** Set up pixel arrays ***/
+        mClearPixels = std::vector<unsigned char>(mTexWidth * mTexHeight * 4, 0); // clear pixel array. "pixels" array is set to this before rendering
+        for (size_t i = 0; i < mClearPixels.size(); i++)
+        {
+            mClearPixels[i] = SDL_ALPHA_OPAQUE; // fill with 255, so we won't have to set the alpha when rendering
+        }
+        mPixels = mClearPixels; // pixel array containing the rendered scene
+
+        // Set up and clear the depth buffer
+        mClearDepthBuffer = std::vector<float>(mTexWidth, 0);
+        for (size_t i = 0; i < mClearDepthBuffer.size(); i++)
+        {
+            mClearDepthBuffer[i] = 10000.0f;
+        }
+        mDepthBuffer = mClearDepthBuffer;
+    }
 
 	/**
 	* Set level to render
@@ -182,7 +187,7 @@ namespace Retro3D
 		}
 
 		/*** Set up the render target texture ***/
-		mRenderTexture = SDL_CreateTexture(SDLRenderTarget->GetSDLRenderer(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, texWidth, texHeight);
+		mRenderTexture = SDL_CreateTexture(SDLRenderTarget->GetSDLRenderer(), SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, mTexWidth, mTexHeight);
 
 		glm::vec3 camPos = mCameraComponent->GetCameraTransform().GetPosition();
 		glm::mat4 camRot = mCameraComponent->GetCameraTransform().GetRotation();
@@ -209,7 +214,7 @@ namespace Retro3D
 		
 		/*** Camera space ***/
 		const glm::mat4 invCamRot = glm::inverse(camRot);
-		const float camAspect = (float)texWidth / texHeight;
+		const float camAspect = (float)mTexWidth / mTexHeight;
 		const float camHeight = camWidth / camAspect;
 		const float d = (camWidth / 2.0f) / tanf(mFOV * 0.5f * 3.141592654f / 180.0f); // distance from eye
 		const glm::vec3 camForward = camRot * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
@@ -222,11 +227,11 @@ namespace Retro3D
 
 		/*** Trace in 2D, for each x ***/
 #ifdef _WIN32
-		#pragma omp parallel for // enable for better performance
+		//#pragma omp parallel for // enable for better performance
 #endif
-		for (int x = 0; x < texWidth; x++)
+		for (int x = 0; x < mTexWidth; x++)
 		{
-			const float relX = (float)x / texWidth;
+			const float relX = (float)x / mTexWidth;
 			const float viewX = (relX - 0.5f) * 2.0f; // range: (-1.0, 1.0)
 
 			const glm::vec3 pixelWorld = screenCentreWorld + viewX * camRightScaled;
@@ -283,8 +288,8 @@ namespace Retro3D
 			const glm::vec3 currPosTopProjCam = camPos + dirToCurrPosTop * dDivCosA;
 			const float wallHalfHeight = currPosTopProjCam.z - camPos.z;
 			const float wallHeight = wallHalfHeight * 2.0f;
-			const int wallHeightScreenSpace = static_cast<int>((wallHeight / camHeight) * texHeight);
-			const int pixelsToSkip = texHeight - wallHeightScreenSpace;
+			const int wallHeightScreenSpace = static_cast<int>((wallHeight / camHeight) * mTexHeight);
+			const int pixelsToSkip = mTexHeight - wallHeightScreenSpace;
 
 			if (gridCellValue != 0)
 			{
@@ -296,10 +301,10 @@ namespace Retro3D
 				{
 					/*** Draw wall ***/
                     const int zMin = std::max(pixelsToSkip / 2, 0);
-					const int zMax = std::min(texHeight - pixelsToSkip / 2, texHeight);
+					const int zMax = std::min(mTexHeight - pixelsToSkip / 2, mTexHeight);
 					for (int z = zMin; z < zMax; z++)
 					{
-						const int offset = (texWidth * 4 * z) + x * 4;
+						const int offset = (mTexWidth * 4 * z) + x * 4;
 
 						const float realZ = 1.0f - ((float)(z - pixelsToSkip / 2) / wallHeightScreenSpace);
 						const glm::vec2 uv = xAxisInters ? glm::vec2(currPos.y - gridY, 1.0f - realZ) : glm::vec2(currPos.x - gridX, 1.0f - realZ);
@@ -311,17 +316,16 @@ namespace Retro3D
                         *(pixelData + offset) = b;
                         *(pixelData + offset + 1) = g;
                         *(pixelData + offset + 2) = r;
-
-						mDepthBuffer[x] = t; // store depth
 					}
+                    mDepthBuffer[x] = t; // store depth
 				}
 			}
 			
 			/*** Draw ceiling ***/
-			const int zMax = std::min(pixelsToSkip / 2, texHeight);
+			const int zMax = std::min(pixelsToSkip / 2, mTexHeight);
 			for (int z = 0; z < zMax; z++)
 			{
-				const float relZ = (float)z / texHeight;
+				const float relZ = (float)z / mTexHeight;
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)
 				const glm::vec3 pixelWorld2 = pixelWorld + viewZ * camUpScaled;
 				const glm::vec3 ceilRayDir = glm::normalize(pixelWorld2 - camPos);
@@ -329,7 +333,7 @@ namespace Retro3D
 				const float tRoof = (1.0f - camPos.z) / ceilRayDir.z;
 				const glm::vec3 roofHit = camPos + ceilRayDir*tRoof;
 
-				const int offset = (texWidth * 4 * z) + x * 4;
+				const int offset = (mTexWidth * 4 * z) + x * 4;
 
 				const int gridX = static_cast<int>(std::floor(roofHit.x));
 				const int gridY = static_cast<int>(std::floor(roofHit.y));
@@ -378,9 +382,9 @@ namespace Retro3D
 			}
 
 			/*** Draw floor ***/
-			for (int z = wallHeightScreenSpace + pixelsToSkip / 2; z < texHeight; z++)
+			for (int z = wallHeightScreenSpace + pixelsToSkip / 2; z < mTexHeight; z++)
 			{
-				const float relZ = (float)z / texHeight;
+				const float relZ = (float)z / mTexHeight;
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)
 				const glm::vec3 pixelWorld2 = pixelWorld + viewZ * camUpScaled;
 				const glm::vec3 floorRayDir = glm::normalize(pixelWorld2 - camPos);
@@ -388,7 +392,7 @@ namespace Retro3D
 				const float tFloor = (0.0f - camPos.z) / floorRayDir.z;
 				const glm::vec3 floorHit = camPos + floorRayDir*tFloor;
 
-				const int offset = (texWidth * 4 * z) + x * 4;
+				const int offset = (mTexWidth * 4 * z) + x * 4;
 
 				const int gridX = static_cast<int>(std::floor(floorHit.x));
 				const int gridY = static_cast<int>(std::floor(floorHit.y));
@@ -439,25 +443,25 @@ namespace Retro3D
 			const glm::vec3 spriteLeftProj = spriteLeftLocal + u2 * t2;		// projection of sprite leftmost pos onto camera
 
 			const float spriteWidthProj = std::abs(spriteCentreProj.x - spriteLeftProj.x);
-			const int spriteWidthScreenSpace = static_cast<int>((spriteWidthProj / camWidth) * texWidth);
-			const int spriteXOffset = static_cast<int>((spriteCentreProj.x / camWidth) * texWidth);
-			const int spriteZOffset = static_cast<int>((spriteLeftProj.z / camHeight) * texHeight);
-			const int startX = (texWidth / 2) + spriteXOffset - (spriteWidthScreenSpace / 2);
-			const int endX = (texWidth / 2) + spriteXOffset + (spriteWidthScreenSpace / 2);
+			const int spriteWidthScreenSpace = static_cast<int>((spriteWidthProj / camWidth) * mTexWidth);
+			const int spriteXOffset = static_cast<int>((spriteCentreProj.x / camWidth) * mTexWidth);
+			const int spriteZOffset = static_cast<int>((spriteLeftProj.z / camHeight) * mTexHeight);
+			const int startX = (mTexWidth / 2) + spriteXOffset - (spriteWidthScreenSpace / 2);
+			const int endX = (mTexWidth / 2) + spriteXOffset + (spriteWidthScreenSpace / 2);
 
 			const float distToCentreSprite = glm::length(w1);
 			const float sqrDistToCentreSprite = distToCentreSprite * distToCentreSprite;
 
-			if (endX >= 0 && startX < texWidth)
+			if (endX >= 0 && startX < mTexWidth)
 			{ 
 				const float sizeRatio = spriteWidthProj / spriteWidth;
 				const float spriteHeightProj = sizeRatio * spriteHeight;
-				const int screenHeight = static_cast<int>((spriteHeightProj / camHeight) * texHeight);
-				const int startZ = std::max(0, (texHeight / 2) + spriteZOffset - (screenHeight / 2));
-				const int endZ = std::min(texHeight - 1, (texHeight / 2) + spriteZOffset + (screenHeight / 2));
+				const int screenHeight = static_cast<int>((spriteHeightProj / camHeight) * mTexHeight);
+				const int startZ = std::max(0, (mTexHeight / 2) + spriteZOffset - (screenHeight / 2));
+				const int endZ = std::min(mTexHeight - 1, (mTexHeight / 2) + spriteZOffset + (screenHeight / 2));
 
 				const int startX2 = std::max(startX, 0);
-				const int endX2 = std::min(endX, texWidth - 1);
+				const int endX2 = std::min(endX, mTexWidth - 1);
 				for (int x = startX2; x < endX2; x++)
 				{
 					const float relXOffset = ((x - startX) / (float)spriteWidthScreenSpace);
@@ -473,7 +477,7 @@ namespace Retro3D
 					// Render each pixel in Z-axis
 					for (int z = startZ; z < endZ; z++)
 					{
-						const int offset = (texWidth * 4 * z) + x * 4;
+						const int offset = (mTexWidth * 4 * z) + x * 4;
 						const float vCoord = (z - startZ) / (float)spriteWidthScreenSpace;
 						const glm::vec2 uv(uCoord, vCoord);
 						const Uint32 pixelColour = getpixel(spriteTexture.GetSDLSurface(), static_cast<int>(uv.x), static_cast<int>(uv.y * spriteTexture.GetSDLSurface()->h));
@@ -495,7 +499,7 @@ namespace Retro3D
 
 		}
 
-		SDL_UpdateTexture(mRenderTexture, NULL, &mPixels[0], texWidth * 4);
+		SDL_UpdateTexture(mRenderTexture, NULL, &mPixels[0], mTexWidth * 4);
 
 		SDL_RenderCopy(SDLRenderTarget->GetSDLRenderer(), mRenderTexture, NULL, NULL);
 

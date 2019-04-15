@@ -158,6 +158,13 @@ namespace Retro3D
 
 		mPlayerController->OnStart();
 
+        int screenResX = 320;
+        int screenResY = 200;
+        mGameConfig.GetInt("video", "FrameBufferResolutionX", screenResX);
+        mGameConfig.GetInt("video", "FrameBufferResolutionY", screenResY);
+        if(screenResX > 0 && screenResY > 0)
+            mSceneRenderer->SetResolution(screenResX, screenResY);
+
 		std::string gameManagerScriptClass;
 		mGameConfig.GetString("game", "GameManager", gameManagerScriptClass);
 
