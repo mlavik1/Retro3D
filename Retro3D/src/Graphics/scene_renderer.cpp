@@ -286,7 +286,7 @@ namespace Retro3D
 			}
 
             // TODO: Make this adjustable
-            const float wallHeight = 1.5f;
+            const float wallHeight = 1.0f;
 
             const float camScreenRatio = mTexHeight / camHeight;
 
