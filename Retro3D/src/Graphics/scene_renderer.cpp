@@ -222,24 +222,25 @@ namespace Retro3D
 		const float camHeight = camWidth / camAspect;
 		const float d = (camWidth / 2.0f) / tanf(mFOV * 0.5f * 3.141592654f / 180.0f); // distance from eye
 		const glm::vec3 camForward = camRot * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-		const glm::vec3 camRight = camRot * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+        const glm::vec2 camForward2D = glm::vec2(camForward.x, camForward.y);
+        const glm::vec3 camRight = camRot * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
 		const glm::vec3 camUp = camRot * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
 		const glm::vec3 camRightScaled = camRight * camWidth * 0.5f;
 		const glm::vec3 camUpScaled = camUp * camHeight * 0.5f;
 
 		const glm::vec3 screenCentreWorld = camPos + camForward * d; // centre of the screen of the camera
 
+        const float camToScreenRatio = mTexHeight / camHeight;
+
 		/*** Trace in 2D, for each x ***/
-#ifdef _WIN32
-		//#pragma omp parallel for // enable for better performance
-#endif
 		for (int x = 0; x < mTexWidth; x++)
 		{
 			const float relX = (float)x / mTexWidth;
 			const float viewX = (relX - 0.5f) * 2.0f; // range: (-1.0, 1.0)
 
 			const glm::vec3 pixelWorld = screenCentreWorld + viewX * camRightScaled;
-			const glm::vec2 rayDir = glm::normalize(pixelWorld - camPos);
+            const float pixelDist = glm::length(pixelWorld - camPos);
+			const glm::vec2 rayDir = (pixelWorld - camPos) / pixelDist;
 
 			// trace in X-Y plane
 			const glm::vec2 rayStart = pixelWorld;
@@ -288,22 +289,17 @@ namespace Retro3D
             // TODO: Make this adjustable
             const float wallHeight = 1.0f;
 
-            const float camScreenRatio = mTexHeight / camHeight;
-
             // Get wall bottom position and project it onto the camera
-			const glm::vec3 wallBottomPos = glm::vec3(currPos.x, currPos.y, 0.0);
-			const glm::vec3 wallBottomDir = glm::normalize(wallBottomPos - camPos);
-			const float cosA = glm::dot(wallBottomDir, camForward);
-			const float dDivCosA = d / cosA;
-			const glm::vec3 currPosBottomProjCam = camPos + wallBottomDir * dDivCosA; // Wall top projected to camera
-            const float projZDist = (camPos.z - currPosBottomProjCam.z);
-            const float wallHeightCamSpace = projZDist / (camPos.z / wallHeight);
-			const int wallHeightScreenSpace = static_cast<int>(wallHeightCamSpace * camScreenRatio);
-            const int wallBottomScreenSpace = static_cast<int>(((camPos.z - currPosBottomProjCam.z) / camHeight + 0.5f) * mTexHeight);
-            const int wallTopScreenSpace = wallBottomScreenSpace - wallHeightScreenSpace;
+            const float cosA = glm::dot(rayDir, camForward2D); // angle between ray dir and cam forward
+            const float hyp = t + pixelDist; // distance to currPos (pixelDist = distance from camera to pixel on view plane; t = distance from view plane to wall)
+            const float distPerp = cosA * hyp; // adj side = perpendicular distance (to view plane)
+            const float projDistFactor = 1.0f / (distPerp / d);
+            const float wallHeightProj = wallHeight * projDistFactor; // d = perpendicular distance from cam to view plane (depends on FOV)
+            const float wallBottomProj = camPos.z * projDistFactor;
 
-            const glm::vec3 wallBottomWorld = wallBottomPos;
-            const glm::vec3 wallTopWorld = wallBottomPos + wallHeight;
+			const int wallHeightScreenSpace = static_cast<int>(wallHeightProj * camToScreenRatio);
+            const int wallBottomScreenSpace = mTexHeight / 2 + static_cast<int>(wallBottomProj * camToScreenRatio);
+            const int wallTopScreenSpace = wallBottomScreenSpace - wallHeightScreenSpace; //wallBottomScreenSpace - wallHeightScreenSpace;
 
 			if (gridCellValue != 0)
 			{
@@ -322,9 +318,9 @@ namespace Retro3D
 						const int offset = (mTexWidth * 4 * z) + x * 4;
 
                         const float tZ = (z - wallTopScreenSpace) / (float)(wallBottomScreenSpace - wallTopScreenSpace);
-                        const float realZ = std::min(wallTopWorld.z * tZ, 1.0f);
-						const glm::vec2 uv = xAxisInters ? glm::vec2(currPos.y - gridY, 1.0f - realZ) : glm::vec2(currPos.x - gridX, 1.0f - realZ);
-						const Uint32 pixelColour = getpixel(wallTextureSurface, static_cast<int>(uv.x * (wallTextureSurface->w - 1)), static_cast<int>(uv.y * (wallTextureSurface->h - 1)));
+                        const float v = 1.0f - std::min(wallHeight * tZ, 1.0f);
+                        const float u = xAxisInters ? currPos.y - gridY : currPos.x - gridX;
+						const Uint32 pixelColour = getpixel(wallTextureSurface, static_cast<int>(u * (wallTextureSurface->w - 1)), static_cast<int>(v * (wallTextureSurface->h - 1)));
 						const Uint8 r = pixelColour;
 						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
 						const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
