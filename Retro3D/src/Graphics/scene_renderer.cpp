@@ -290,20 +290,20 @@ namespace Retro3D
 
             const float camScreenRatio = mTexHeight / camHeight;
 
-            // Get wall top position and project it onto the camera
-			const glm::vec3 currPosBottom = glm::vec3(currPos.x, currPos.y, 0.0);
-			const glm::vec3 dirToCurrPosBottom = glm::normalize(currPosBottom - camPos);
-			const float cosA = glm::dot(dirToCurrPosBottom, camForward);
+            // Get wall bottom position and project it onto the camera
+			const glm::vec3 wallBottomPos = glm::vec3(currPos.x, currPos.y, 0.0);
+			const glm::vec3 wallBottomDir = glm::normalize(wallBottomPos - camPos);
+			const float cosA = glm::dot(wallBottomDir, camForward);
 			const float dDivCosA = d / cosA;
-			const glm::vec3 currPosBottomProjCam = camPos + dirToCurrPosBottom * dDivCosA; // Wall top projected to camera
+			const glm::vec3 currPosBottomProjCam = camPos + wallBottomDir * dDivCosA; // Wall top projected to camera
             const float projZDist = (camPos.z - currPosBottomProjCam.z);
             const float wallHeightCamSpace = projZDist / (camPos.z / wallHeight);
 			const int wallHeightScreenSpace = static_cast<int>(wallHeightCamSpace * camScreenRatio);
             const int wallBottomScreenSpace = static_cast<int>(((camPos.z - currPosBottomProjCam.z) / camHeight + 0.5f) * mTexHeight);
             const int wallTopScreenSpace = wallBottomScreenSpace - wallHeightScreenSpace;
 
-            const glm::vec3 wallBottomWorld = currPosBottom;
-            const glm::vec3 wallTopWorld = currPosBottom + wallHeight;
+            const glm::vec3 wallBottomWorld = wallBottomPos;
+            const glm::vec3 wallTopWorld = wallBottomPos + wallHeight;
 
 			if (gridCellValue != 0)
 			{
@@ -340,10 +340,10 @@ namespace Retro3D
 			/*** Draw ceiling ***/
 			for (int z = 0; z <= wallTopScreenSpace; z++)
 			{
-				const float relZ = (float)z / mTexHeight;
+				const float relZ = (float)z / (mTexHeight - 1);
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)
-				const glm::vec3 pixelWorld2 = pixelWorld + viewZ * camUpScaled;
-				const glm::vec3 ceilRayDir = glm::normalize(pixelWorld2 - camPos);
+				const glm::vec3 ceilPixelWorld = pixelWorld + viewZ * camUpScaled;
+				const glm::vec3 ceilRayDir = glm::normalize(ceilPixelWorld - camPos);
 
 				const float tRoof = (1.0f - camPos.z) / ceilRayDir.z;
 				const glm::vec3 roofHit = camPos + ceilRayDir*tRoof;
@@ -399,10 +399,10 @@ namespace Retro3D
 			/*** Draw floor ***/
 			for (int z = wallBottomScreenSpace; z < mTexHeight; z++)
 			{
-				const float relZ = (float)z / mTexHeight;
+				const float relZ = (float)z / (mTexHeight - 1);
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)
-				const glm::vec3 pixelWorld2 = pixelWorld + viewZ * camUpScaled;
-				const glm::vec3 floorRayDir = glm::normalize(pixelWorld2 - camPos);
+				const glm::vec3 floorPixelWorld = pixelWorld + viewZ * camUpScaled;
+				const glm::vec3 floorRayDir = glm::normalize(floorPixelWorld - camPos);
 
 				const float tFloor = (0.0f - camPos.z) / floorRayDir.z;
 				const glm::vec3 floorHit = camPos + floorRayDir*tFloor;
