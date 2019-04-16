@@ -322,9 +322,9 @@ namespace Retro3D
 						const int offset = (mTexWidth * 4 * z) + x * 4;
 
                         const float tZ = (z - wallTopScreenSpace) / (float)(wallBottomScreenSpace - wallTopScreenSpace);
-                        const float realZ = wallTopWorld.z * tZ;;
+                        const float realZ = std::min(wallTopWorld.z * tZ, 1.0f);
 						const glm::vec2 uv = xAxisInters ? glm::vec2(currPos.y - gridY, 1.0f - realZ) : glm::vec2(currPos.x - gridX, 1.0f - realZ);
-						const Uint32 pixelColour = getpixel(wallTextureSurface, static_cast<int>(uv.x * wallTextureSurface->w), static_cast<int>(uv.y * wallTextureSurface->h));
+						const Uint32 pixelColour = getpixel(wallTextureSurface, static_cast<int>(uv.x * (wallTextureSurface->w - 1)), static_cast<int>(uv.y * (wallTextureSurface->h - 1)));
 						const Uint8 r = pixelColour;
 						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
 						const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
@@ -338,7 +338,7 @@ namespace Retro3D
 			}
 			
 			/*** Draw ceiling ***/
-			for (int z = 0; z <= wallTopScreenSpace; z++)
+			for (int z = 0; z < wallTopScreenSpace; z++)
 			{
 				const float relZ = (float)z / (mTexHeight - 1);
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)
