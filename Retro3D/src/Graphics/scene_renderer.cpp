@@ -339,7 +339,7 @@ namespace Retro3D
 				const float relZ = (float)z / (mTexHeight - 1);
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)
 				const glm::vec3 ceilPixelWorld = pixelWorld + viewZ * camUpScaled;
-				const glm::vec3 ceilRayDir = glm::normalize(ceilPixelWorld - camPos);
+				const glm::vec3 ceilRayDir = (ceilPixelWorld - camPos);
 
 				const float tRoof = (1.0f - camPos.z) / ceilRayDir.z;
 				const glm::vec3 roofHit = camPos + ceilRayDir*tRoof;
@@ -358,13 +358,10 @@ namespace Retro3D
 						const SDL_Surface* ceilingTextureSurface = mTextureSurfaceMap[ceilingTextureKey];
 						const glm::vec2 uv(roofHit.x - gridX, roofHit.y - gridY);
 						const Uint32 pixelColour = getpixel(ceilingTextureSurface, static_cast<int>(uv.x * ceilingTextureSurface->w), static_cast<int>(uv.y * ceilingTextureSurface->h));
-						const Uint8 r = pixelColour;
-						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
-						const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
-
-                        *(pixelData + offset) = b;
-                        *(pixelData + offset + 1) = g;
-                        *(pixelData + offset + 2) = r;
+                        
+                        mPixels[offset] = *(((Uint8*)&pixelColour) + 2); // b
+                        mPixels[offset + 1] = *(((Uint8*)&pixelColour) + 1); // g
+                        mPixels[offset + 2] = pixelColour; // r
 					}
 					else if (renderSkybox)
 					{
@@ -381,13 +378,10 @@ namespace Retro3D
 						//const glm::vec2 uv(u, v - 1.0f*std::floorf(v)); // TODO
 						const glm::vec2 uv(((!xAxisSkyboxInters && ceilRayDir.y < 0.0f) || xAxisSkyboxInters && ceilRayDir.x < 0.0f) ? (1.0f - u) : u, std::abs(v));
 						const Uint32 pixelColour = getpixel(mSkyboxTexture, static_cast<int>(uv.x * mSkyboxTexture->w), static_cast<int>(uv.y * mSkyboxTexture->h));
-						const Uint8 r = pixelColour;
-						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
-						const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
 
-                        *(pixelData + offset) = b;
-                        *(pixelData + offset + 1) = g;
-                        *(pixelData + offset + 2) = r;
+                        mPixels[offset] = *(((Uint8*)&pixelColour) + 2); // b
+                        mPixels[offset + 1] = *(((Uint8*)&pixelColour) + 1); // g
+                        mPixels[offset + 2] = pixelColour; // r
 					}
 				}
 			}
@@ -398,7 +392,7 @@ namespace Retro3D
 				const float relZ = (float)z / (mTexHeight - 1);
 				const float viewZ = (relZ - 0.5f) * -2.0f; // range: (-1.0, 1.0)
 				const glm::vec3 floorPixelWorld = pixelWorld + viewZ * camUpScaled;
-				const glm::vec3 floorRayDir = glm::normalize(floorPixelWorld - camPos);
+				const glm::vec3 floorRayDir = (floorPixelWorld - camPos);
 
 				const float tFloor = (0.0f - camPos.z) / floorRayDir.z;
 				const glm::vec3 floorHit = camPos + floorRayDir*tFloor;
@@ -416,14 +410,10 @@ namespace Retro3D
 				const SDL_Surface* floorTextureSurface = mTextureSurfaceMap[floorTextureKey];
 				const glm::vec2 uv(floorHit.x - gridX, floorHit.y - gridY);
 				const Uint32 pixelColour = getpixel(floorTextureSurface, static_cast<int>(uv.x * floorTextureSurface->w), static_cast<int>(uv.y * floorTextureSurface->h));
-				const Uint8 r = pixelColour;
-				const Uint8 g = *(((Uint8*)&pixelColour) + 1);
-				const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
-
-                unsigned char* pixelData = mPixels.data();
-                *(pixelData + offset) = b;
-                *(pixelData + offset + 1) = g;
-                *(pixelData + offset + 2) = r;
+                
+                mPixels[offset] = *(((Uint8*)&pixelColour) + 2); // b
+                mPixels[offset + 1] = *(((Uint8*)&pixelColour) + 1); // g
+                mPixels[offset + 2] = pixelColour; // r
 			}
 		}
 
