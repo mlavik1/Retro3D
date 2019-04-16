@@ -16,9 +16,13 @@ namespace Retro3D
 		mKeycodeMap["right"] = SDLK_RIGHT;
 		mKeycodeMap["space"] = SDLK_SPACE;
 		mKeycodeMap["return"] = SDLK_RETURN;
-		mKeycodeMap["shift"] = SDLK_LSHIFT;
-		mKeycodeMap["shift"] = SDLK_RSHIFT;
-		mKeycodeMap["q"] = SDLK_q;
+		mKeycodeMap["lshift"] = SDLK_LSHIFT;
+		mKeycodeMap["rshift"] = SDLK_RSHIFT;
+        mKeycodeMap["rctrl"] = SDLK_RCTRL;
+        mKeycodeMap["lctrl"] = SDLK_LCTRL;
+        mKeycodeMap["lalt"] = SDLK_LALT;
+        mKeycodeMap["ralt"] = SDLK_RALT;
+        mKeycodeMap["q"] = SDLK_q;
 		mKeycodeMap["w"] = SDLK_w;
 		mKeycodeMap["e"] = SDLK_e;
 		mKeycodeMap["r"] = SDLK_r;
@@ -130,7 +134,7 @@ namespace Retro3D
 
 	}
 
-	bool InputManager::GetKey(const char* arg_key)
+	bool InputManager::GetKey(const std::string& arg_key)
 	{
 		auto itKeyCode = mKeycodeMap.find(arg_key);
 		if (itKeyCode != mKeycodeMap.end())
@@ -143,7 +147,7 @@ namespace Retro3D
 		return false;
 	}
 
-	bool InputManager::GetKeyDown(const char* arg_key)
+	bool InputManager::GetKeyDown(const std::string& arg_key)
 	{
 		auto itKeyCode = mKeycodeMap.find(arg_key);
 		if (itKeyCode != mKeycodeMap.end())
@@ -156,7 +160,7 @@ namespace Retro3D
 		return false;
 	}
 
-	bool InputManager::GetKeyUp(const char* arg_key)
+	bool InputManager::GetKeyUp(const std::string& arg_key)
 	{
 		auto itKeyCode = mKeycodeMap.find(arg_key);
 		if (itKeyCode != mKeycodeMap.end())

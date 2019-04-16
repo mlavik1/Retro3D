@@ -21,10 +21,24 @@ class PlayerMovement
 		var forward = trans.GetForwardVector();
 		var right = trans.GetRightVector();
 		
+		var isCrouching = this.inputManager.GetKey("lalt");
+		
 		var speed = 4.0f;
 		var rotSpeed = 5.0f;
 		var vel = vec3(0.0f, 0.0f, 0.0f);
 		var rot = vec3(0.0f, 0.0f, 0.0f);
+		
+		var camPos = trans.GetPosition();
+		if(isCrouching)
+		{
+			speed = speed * 0.5f;
+			camPos.z = 0.2f;
+		}
+		else
+		{
+			camPos.z = 0.5f;
+		}
+		trans.SetPosition(camPos);
 		
 		if(this.inputManager.GetKey("w"))
 		{
