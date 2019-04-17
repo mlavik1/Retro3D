@@ -16,6 +16,7 @@
 #include "Actor/player_controller.h" // TEMP
 #include <API/SDL/sdl_render_target.h>
 #include "Misc/path_utils.h"
+#include <cmath>
 
 /* BEGIN: TEMP FOR TESTING */
 float camWidth = 0.2f;

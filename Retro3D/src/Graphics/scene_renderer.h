@@ -15,7 +15,6 @@ Everything is software rendered (obviously for educational purposes, as it is su
 #include "Object/weak_objectptr.h"
 #include "texture.h"
 #include <glm/glm.hpp>
-#include "glm/gtx/fast_square_root.hpp"
 #include <algorithm>
 
 struct SDL_Surface;
