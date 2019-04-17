@@ -72,7 +72,7 @@ namespace Retro3D
     {
         for (int i = 0; i < 2048; i++)
         {
-            mLightIntensities[i] = mAmbientLight / std::powf(std::sqrtf(1.0f + i * 0.05f), mLightFade);
+            mLightIntensities[i] = mAmbientLight / std::pow(std::sqrt(1.0f + i * 0.05f), mLightFade);
         }
     }
 
