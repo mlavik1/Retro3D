@@ -25,6 +25,7 @@
 #include "Actor/player_controller.h"
 #include "Object/weak_objectptr.h"
 #include "Actor/player.h"
+#include "Graphics/scene_renderer.h"
 
 namespace Retro3D
 {
@@ -50,7 +51,8 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::fun(&GameEngine::GetScriptManager), "GetScriptManager");
 		arg_chaiscript->add(chaiscript::fun(&GameEngine::GetWidgetManager), "GetWidgetManager");
 		arg_chaiscript->add(chaiscript::fun(&GameEngine::GetAudioManager), "GetAudioManager");
-		arg_chaiscript->add(chaiscript::fun(&GameEngine::GetGameConfig), "GetGameConfig");
+        arg_chaiscript->add(chaiscript::fun(&GameEngine::GetSceneRenderer), "GetSceneRenderer");
+        arg_chaiscript->add(chaiscript::fun(&GameEngine::GetGameConfig), "GetGameConfig");
 
 		arg_chaiscript->add(chaiscript::user_type<Level>(), "R3DLevel");
 		arg_chaiscript->add(chaiscript::fun(&Level::LoadLevel), "LoadLevel");
@@ -162,6 +164,10 @@ namespace Retro3D
 
 		arg_chaiscript->add(chaiscript::user_type<AudioManager>(), "R3DAudioManager");
 		arg_chaiscript->add(chaiscript::fun(&AudioManager::PlayAudioFile), "PlayAudioFile");
+
+        arg_chaiscript->add(chaiscript::user_type<SceneRenderer>(), "R3DSceneRenderer");
+        arg_chaiscript->add(chaiscript::fun(&SceneRenderer::SetAmbientLight), "SetAmbientLight");
+        arg_chaiscript->add(chaiscript::fun(&SceneRenderer::SetLightFade), "SetLightFade");
 
 		arg_chaiscript->add(chaiscript::user_type<AudioTrack>(), "R3DAudioTrack");
 		arg_chaiscript->add(chaiscript::fun(&AudioTrack::SetLooping), "SetLooping");

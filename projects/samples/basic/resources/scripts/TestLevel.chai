@@ -32,5 +32,8 @@ class TestLevel
 			print(fov);
 		}
 		
+		// Enable distance based light fade
+		GetGameEngine().GetSceneRenderer().SetLightFade(0.9f);
+		
 	}
 };

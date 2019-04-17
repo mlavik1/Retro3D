@@ -59,16 +59,21 @@ namespace Retro3D
 
         SetResolution(320, 200);
 
-        for (int i = 0; i < 2048; i++)
-        {
-            mLightIntensities[i] = 1.0f / std::powf(std::sqrtf(1.0f + i * 0.05f), mLightFade);
-        }
+        RecalculateLightIntensities();
 	}
 
 
 	SceneRenderer::~SceneRenderer()
 	{
 	}
+
+    void SceneRenderer::RecalculateLightIntensities()
+    {
+        for (int i = 0; i < 2048; i++)
+        {
+            mLightIntensities[i] = mAmbientLight / std::powf(std::sqrtf(1.0f + i * 0.05f), mLightFade);
+        }
+    }
 
     void SceneRenderer::SetResolution(int xRes, int yRes)
     {
@@ -145,6 +150,18 @@ namespace Retro3D
 	{
 		mCameraComponent = arg_comp;
 	}
+
+    void SceneRenderer::SetLightFade(float fade)
+    {
+        mLightFade = std::fmaxf(fade, 0.0f);
+        RecalculateLightIntensities();
+    }
+
+    void SceneRenderer::SetAmbientLight(float light)
+    {
+        mAmbientLight = std::fmaxf(std::fminf(light, 1.0f), 0.0f);
+        RecalculateLightIntensities();
+    }
 
 	/**
 	* Render the whole scene.
