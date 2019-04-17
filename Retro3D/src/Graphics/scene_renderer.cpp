@@ -58,6 +58,11 @@ namespace Retro3D
 		mRenderTexture = nullptr;
 
         SetResolution(320, 200);
+
+        for (int i = 0; i < 2048; i++)
+        {
+            mLightIntensities[i] = 1.0f / std::powf(std::sqrtf(1.0f + i * 0.05f), mLightFade);
+        }
 	}
 
 
@@ -301,6 +306,8 @@ namespace Retro3D
             const int wallBottomScreenSpace = mTexHeight / 2 + static_cast<int>(wallBottomProj * camToScreenRatio);
             const int wallTopScreenSpace = wallBottomScreenSpace - wallHeightScreenSpace; //wallBottomScreenSpace - wallHeightScreenSpace;
 
+            const float lightIntensity = GetLightIntensity(currPos - glm::vec2(camPos));
+
 			if (gridCellValue != 0)
 			{
 				const SDL_Surface* wallTextureSurface = mTextureSurfaceMap[gridCellValue];
@@ -325,9 +332,9 @@ namespace Retro3D
 						const Uint8 g = *(((Uint8*)&pixelColour) + 1);
 						const Uint8 b = *(((Uint8*)&pixelColour) + 2);;
 
-                        *(pixelData + offset) = b;
-                        *(pixelData + offset + 1) = g;
-                        *(pixelData + offset + 2) = r;
+                        pixelData[offset] = b * lightIntensity;
+                        pixelData[offset + 1] = g * lightIntensity;
+                        pixelData[offset + 2] = r * lightIntensity;
 					}
                     mDepthBuffer[x] = t; // store depth
 				}
@@ -351,6 +358,8 @@ namespace Retro3D
 
 				if (mLevel->IsInGrid(gridX, gridY))
 				{
+                    const float lightIntensity = GetLightIntensity(roofHit - camPos);
+
 					const char ceilingTextureKey = mLevel->GetCeilingMapCell(gridX, gridY);
 
 					if (ceilingTextureKey != 0)
@@ -359,9 +368,13 @@ namespace Retro3D
 						const glm::vec2 uv(roofHit.x - gridX, roofHit.y - gridY);
 						const Uint32 pixelColour = getpixel(ceilingTextureSurface, static_cast<int>(uv.x * ceilingTextureSurface->w), static_cast<int>(uv.y * ceilingTextureSurface->h));
                         
-                        mPixels[offset] = *(((Uint8*)&pixelColour) + 2); // b
-                        mPixels[offset + 1] = *(((Uint8*)&pixelColour) + 1); // g
-                        mPixels[offset + 2] = pixelColour; // r
+                        const Uint8 r = *(((Uint8*)&pixelColour));
+                        const Uint8 g = *(((Uint8*)&pixelColour) + 1);
+                        const Uint8 b = *(((Uint8*)&pixelColour) + 2);
+
+                        pixelData[offset] = b * lightIntensity; // b
+                        pixelData[offset + 1] = g * lightIntensity; // g
+                        pixelData[offset + 2] = r * lightIntensity; // r
 					}
 					else if (renderSkybox)
 					{
@@ -379,9 +392,9 @@ namespace Retro3D
 						const glm::vec2 uv(((!xAxisSkyboxInters && ceilRayDir.y < 0.0f) || xAxisSkyboxInters && ceilRayDir.x < 0.0f) ? (1.0f - u) : u, std::abs(v));
 						const Uint32 pixelColour = getpixel(mSkyboxTexture, static_cast<int>(uv.x * mSkyboxTexture->w), static_cast<int>(uv.y * mSkyboxTexture->h));
 
-                        mPixels[offset] = *(((Uint8*)&pixelColour) + 2); // b
-                        mPixels[offset + 1] = *(((Uint8*)&pixelColour) + 1); // g
-                        mPixels[offset + 2] = pixelColour; // r
+                        pixelData[offset] = *(((Uint8*)&pixelColour) + 2); // b
+                        pixelData[offset + 1] = *(((Uint8*)&pixelColour) + 1); // g
+                        pixelData[offset + 2] = pixelColour; // r
 					}
 				}
 			}
@@ -407,13 +420,19 @@ namespace Retro3D
 				if (floorTextureKey == 0)
 					continue;
 
+                const float lightIntensity = GetLightIntensity(floorHit - camPos);
+
 				const SDL_Surface* floorTextureSurface = mTextureSurfaceMap[floorTextureKey];
 				const glm::vec2 uv(floorHit.x - gridX, floorHit.y - gridY);
 				const Uint32 pixelColour = getpixel(floorTextureSurface, static_cast<int>(uv.x * floorTextureSurface->w), static_cast<int>(uv.y * floorTextureSurface->h));
                 
-                mPixels[offset] = *(((Uint8*)&pixelColour) + 2); // b
-                mPixels[offset + 1] = *(((Uint8*)&pixelColour) + 1); // g
-                mPixels[offset + 2] = pixelColour; // r
+                const Uint8 r = *(((Uint8*)&pixelColour));
+                const Uint8 g = *(((Uint8*)&pixelColour) + 1);
+                const Uint8 b = *(((Uint8*)&pixelColour) + 2);
+
+                pixelData[offset] = b * lightIntensity; // b
+                pixelData[offset + 1] = g * lightIntensity; // g
+                pixelData[offset + 2] = r * lightIntensity; // r
 			}
 		}
 
@@ -458,6 +477,8 @@ namespace Retro3D
 			const float distToCentreSprite = glm::length(w1);
 			const float sqrDistToCentreSprite = distToCentreSprite * distToCentreSprite;
 
+            const float lightIntensity = GetLightIntensity(spriteCentrePos - camPos);
+
 			if (endX >= 0 && startX < mTexWidth)
 			{ 
 				const float sizeRatio = spriteWidthProj / spriteWidth;
@@ -495,9 +516,9 @@ namespace Retro3D
 
 						if (a > 0)
 						{
-							mPixels[offset + 0] = b;
-							mPixels[offset + 1] = g;
-							mPixels[offset + 2] = r;
+                            pixelData[offset + 0] = b * lightIntensity;
+                            pixelData[offset + 1] = g * lightIntensity;
+                            pixelData[offset + 2] = r * lightIntensity;
 						}
 					}
 				}

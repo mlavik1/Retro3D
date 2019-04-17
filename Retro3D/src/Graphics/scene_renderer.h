@@ -15,6 +15,8 @@ Everything is software rendered (obviously for educational purposes, as it is su
 #include "Object/weak_objectptr.h"
 #include "texture.h"
 #include <glm/glm.hpp>
+#include "glm/gtx/fast_square_root.hpp"
+#include <algorithm>
 
 struct SDL_Surface;
 struct SDL_Texture;
@@ -58,6 +60,21 @@ namespace Retro3D
 		std::vector<unsigned char> mClearPixels;
 		std::vector<float> mDepthBuffer;
 		std::vector<float> mClearDepthBuffer;
+
+        float mLightFade = 0.0f; // 0 = none; < 1 = slow; > 1 = fast
+        float mLightIntensities[2048]; // index = squared distance; value = light intensity (in range: 0,1)
+
+        inline float GetLightIntensity(const glm::vec2& dir)
+        {
+            const unsigned int iSqrt = std::min(2047u, (unsigned int)((dir.x * dir.x + dir.y * dir.y) * 20.0f));
+            return mLightIntensities[iSqrt];
+        }
+
+        inline float GetLightIntensity(const glm::vec3& dir)
+        {
+            const unsigned int iSqrt = std::min(2047u, (unsigned int)((dir.x * dir.x + dir.y * dir.y + dir.z * dir.z) * 20.0f));
+            return mLightIntensities[iSqrt];
+        }
 	};
 
 	class SpriteRenderObject
