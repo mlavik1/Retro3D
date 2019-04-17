@@ -420,33 +420,38 @@ namespace Retro3D
 		/*** Render sprites ***/
 		for (auto iter = renderObjects.rbegin(); iter != renderObjects.rend(); iter++)
 		{
-			const glm::vec3& spriteCentrePos = (*iter).second.mPosition;
+            // ----- TODO: Clean up this godforsaken mess -----
+            
+            const glm::vec3& spriteCentrePos = (*iter).second.mPosition;
 			const Texture& spriteTexture = *(*iter).second.mTexture;
 			const float spriteWidth = 1.0f;  // TODO
 			const float spriteHeight = 1.0f; // TODO
-			const glm::vec3 spriteLeftPos = spriteCentrePos - camRight * 0.5f;
+			const glm::vec3 spriteLeftPos = spriteCentrePos - camRight * 0.5f * spriteWidth;
 
 			// calculate sprite pos local to camera space
-			const glm::vec3 w1 = spriteCentrePos - screenCentreWorld;
-			const glm::vec3 w2 = spriteLeftPos - screenCentreWorld;
-			const glm::vec3 spriteCentreLocal = invCamRot * glm::vec4(w1.x, w1.y, w1.z, 0.0f);
-			const glm::vec3 spriteLeftLocal = invCamRot * glm::vec4(w2.x, w2.y, w2.z, 0.0f);
+			const glm::vec2 w1 = spriteCentrePos - screenCentreWorld;
+			const glm::vec2 w2 = spriteLeftPos - screenCentreWorld;
+			const glm::vec2 spriteCentreLocal = invCamRot * glm::vec4(w1.x, w1.y, 0.0f, 0.0f);
+			const glm::vec2 spriteLeftLocal = invCamRot * glm::vec4(w2.x, w2.y, 0.0f, 0.0f);
 
-			const glm::vec3 camPosLocal = glm::vec3(0.0f, 1.0f, 0.0f) * d * -1.0f;
+			const glm::vec2 camPosLocal = glm::vec3(0.0f, -d, 0.0f);
 
-			const glm::vec3 u1 = camPosLocal - spriteCentreLocal;
-			const glm::vec3 u2 = camPosLocal - spriteLeftLocal;
+			const glm::vec2 u1 = camPosLocal - spriteCentreLocal;
+			const glm::vec2 u2 = camPosLocal - spriteLeftLocal;
 
 			// b + zt = 0  =>  t = -b / z
+            // (t = perpendicular distance)
 			const float t1 = -1.0f * spriteCentreLocal.y / u1.y;
 			const float t2 = -1.0f * spriteLeftLocal.y / u2.y;
-			const glm::vec3 spriteCentreProj = spriteCentreLocal + u1 * t1; // projection of sprite centre onto camera
-			const glm::vec3 spriteLeftProj = spriteLeftLocal + u2 * t2;		// projection of sprite leftmost pos onto camera
+			const glm::vec2 spriteCentreProj = spriteCentreLocal + u1 * t1; // projection of sprite centre onto camera
+			const glm::vec2 spriteLeftProj = spriteLeftLocal + u2 * t2;		// projection of sprite leftmost pos onto camera
 
-			const float spriteWidthProj = std::abs(spriteCentreProj.x - spriteLeftProj.x);
+			const float spriteWidthProj = std::abs(spriteCentreProj.x - spriteLeftProj.x) * 2.0f;
+            const float zOffsetProj = (camPos.z - spriteCentrePos.z) * (spriteWidthProj / spriteWidth);
+
 			const int spriteWidthScreenSpace = static_cast<int>((spriteWidthProj / camWidth) * mTexWidth);
 			const int spriteXOffset = static_cast<int>((spriteCentreProj.x / camWidth) * mTexWidth);
-			const int spriteZOffset = static_cast<int>((spriteLeftProj.z / camHeight) * mTexHeight);
+            const int spriteZOffset = static_cast<int>((zOffsetProj / camHeight) * mTexHeight);
 			const int startX = (mTexWidth / 2) + spriteXOffset - (spriteWidthScreenSpace / 2);
 			const int endX = (mTexWidth / 2) + spriteXOffset + (spriteWidthScreenSpace / 2);
 
