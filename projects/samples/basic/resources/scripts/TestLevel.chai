@@ -7,7 +7,7 @@ class TestLevel
 		// Test: billboarded sprite (ca be used for enemies an dobjects)
 		var actor1 = CreateActor();
 		var spriteComp = CreateSpriteComponent();
-		spriteComp.SetTexture("resources/textures/grass1.png");
+		spriteComp.SetTexture("resources/textures/smiley.png");
 		actor1.AddComponent(spriteComp);
 		actor1.GetTransform().SetPosition(vec3(2.5f, 4.0f, 0.5f));
 

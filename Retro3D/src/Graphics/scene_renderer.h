@@ -34,6 +34,8 @@ namespace Retro3D
 		/** Renders the whole scene. */
 		void RenderScene(IRenderTarget* arg_rendertarget);
 
+        void SetResolution(int xRes, int yRes);
+
 		/** Sets the Level to render. Called from the engine. */
 		void SetLevel(Level* arg_level);
 
@@ -49,6 +51,8 @@ namespace Retro3D
 		SDL_Surface* mSkyboxTexture = nullptr;
 		WeakObjectPtr<CameraComponent> mCameraComponent; // TODO: pass on some other structure
 		float mFOV = 95;
+        int mTexWidth = 320;
+        int mTexHeight = 200;
 		SDL_Texture* mRenderTexture;
 		std::vector<unsigned char> mPixels;
 		std::vector<unsigned char> mClearPixels;

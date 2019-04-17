@@ -1,0 +1,43 @@
+class MyGameManager
+{
+	var playerName;
+	var playerHealth;
+	
+	def MyGameManager()
+	{
+		this.playerName = "Player01";
+		this.playerHealth = 100.0f;
+	}
+
+	def StartGame()
+	{
+		var mainMenuWidget = CreateScriptWidget("MainMenuWidget");
+		GetGameEngine().GetWidgetManager().AddWidget(mainMenuWidget);
+	}
+	
+	def StartNewGame()
+	{
+		print("Starting new game");
+		
+		// Set level
+		GetGameEngine().GetCurrentLevel().LoadLevel("level1");
+
+		// Create player
+		var player = CreatePlayer();
+		player.GetTransform().SetPosition(vec3(2.0f, 1.0f, 0.5f));
+		
+		var camComp = CreateCameraComponent();
+		player.AddComponent(camComp);
+		
+		var playerMovement = CreateScriptComponent();
+		playerMovement.SetScriptClass("PlayerMovement");
+		player.AddComponent(playerMovement);
+		
+		GetGameEngine().GetPlayerController().SetPlayer(player);
+		
+		// Create the HUD
+		var hudWidget = CreateScriptWidget("HUDWidget");
+		GetGameEngine().GetWidgetManager().AddWidget(hudWidget);
+	}
+	
+}

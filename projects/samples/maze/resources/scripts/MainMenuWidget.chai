@@ -17,10 +17,9 @@ class MainMenuWidget
 	{
 		this.funcNewGame = fun[this]()
 		{
-			print("New game");
+			print("Starting new game");
 			
-			var newGameWidget = CreateScriptWidget("NewGameWidget");
-			GetGameEngine().GetWidgetManager().AddWidget(newGameWidget);
+			GetGameManager().StartNewGame();
 			
 			GetGameEngine().GetWidgetManager().RemoveWidget(this.GetWidget());
 		}

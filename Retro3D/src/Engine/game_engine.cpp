@@ -96,8 +96,9 @@ namespace Retro3D
 		SetCurrentLevel(new Level());
 
 		// Read game config
-		if (!mGameConfig.ReadFile(PathUtils::CombinePaths(GetResourceDirectory(), "/config/GameConfig.ini")))
-			LOG_ERROR() << "Failed to read config game file: ";
+        std::string configFilePath = PathUtils::CombinePaths(GetResourceDirectory(), "/config/GameConfig.ini");
+		if (!mGameConfig.ReadFile(configFilePath))
+			LOG_ERROR() << "Failed to read config game file: " << configFilePath;
 
 		// Read resources.ini
 	}
@@ -157,6 +158,13 @@ namespace Retro3D
 		mResourceManager->OnStart();
 
 		mPlayerController->OnStart();
+
+        int screenResX = 320;
+        int screenResY = 200;
+        mGameConfig.GetInt("video", "FrameBufferResolutionX", screenResX);
+        mGameConfig.GetInt("video", "FrameBufferResolutionY", screenResY);
+        if(screenResX > 0 && screenResY > 0)
+            mSceneRenderer->SetResolution(screenResX, screenResY);
 
 		std::string gameManagerScriptClass;
 		mGameConfig.GetString("game", "GameManager", gameManagerScriptClass);

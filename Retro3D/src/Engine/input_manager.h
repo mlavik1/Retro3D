@@ -29,24 +29,19 @@ namespace Retro3D
 		* Checks if the specified key is pressed down. 
 		* @return true, if arg_key is pressed down.
 		*/
-		bool GetKey(const char* arg_key);
+		bool GetKey(const std::string& arg_key);
 		
 		/**
 		* Checks if the specified key was pressed down this frame.
 		* @return true, if arg_key was pressed down.
 		*/
-		bool GetKeyDown(const char* arg_key);
+		bool GetKeyDown(const std::string& arg_key);
 		
 		/**
 		* Checks if the specified key was pressed up this frame.
 		* @return true, if arg_key was pressed up.
 		*/
-		bool GetKeyUp(const char* arg_key);
-
-		// std::string versions of the GetKey-functions (used by ChaiScript)
-		bool GetKey_String(const std::string& arg_key) { return GetKey(arg_key.c_str()); }
-		bool GetKeyDown_String(const std::string& arg_key) { return GetKeyDown(arg_key.c_str()); }
-		bool GetKeyUp_String(const std::string& arg_key) { return GetKeyUp(arg_key.c_str()); }
+		bool GetKeyUp(const std::string& arg_key);
 
 		/**
 		* Checks if the specified mouse button is pressed.

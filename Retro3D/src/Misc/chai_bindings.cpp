@@ -146,9 +146,9 @@ namespace Retro3D
 
 		// Managers
 		arg_chaiscript->add(chaiscript::user_type<InputManager>(), "R3DInputManager");
-		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKey_String), "GetKey");
-		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKeyDown_String), "GetKeyDown");
-		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKeyUp_String), "GetKeyUp");
+		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKey), "GetKey");
+		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKeyDown), "GetKeyDown");
+		arg_chaiscript->add(chaiscript::fun(&InputManager::GetKeyUp), "GetKeyUp");
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetMousePressed), "GetMousePressed");
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetMouseReleased), "GetMouseReleased");
 		arg_chaiscript->add(chaiscript::fun(&InputManager::GetMousePosition), "GetMousePosition");
@@ -274,6 +274,12 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::constructor<glm::vec3(float, float, float)>(), "vec3");
         arg_chaiscript->add(chaiscript::constructor<glm::vec3(const glm::vec3&)>(), "vec3");
         arg_chaiscript->add(chaiscript::constructor<glm::vec3()>(), "vec3");
+        arg_chaiscript->add(chaiscript::fun(&glm::vec3::x), "x");
+        arg_chaiscript->add(chaiscript::fun(&glm::vec3::y), "y");
+        arg_chaiscript->add(chaiscript::fun(&glm::vec3::z), "z");
+        arg_chaiscript->add(chaiscript::fun(&glm::vec3::r), "r");
+        arg_chaiscript->add(chaiscript::fun(&glm::vec3::g), "g");
+        arg_chaiscript->add(chaiscript::fun(&glm::vec3::b), "b");
         arg_chaiscript->add(chaiscript::fun([](glm::vec3 a, glm::vec3 b) { return a + b; }), "+");
         arg_chaiscript->add(chaiscript::fun([](glm::vec3 a, glm::vec3 b) { return a - b; }), "-");
         arg_chaiscript->add(chaiscript::fun([](glm::vec3 a, glm::vec3 b) { return a * b; }), "*");
@@ -293,6 +299,8 @@ namespace Retro3D
 		arg_chaiscript->add(chaiscript::constructor<glm::vec2(float, float)>(), "vec2");
         arg_chaiscript->add(chaiscript::constructor<glm::vec2(const glm::vec2&)>(), "vec2");
         arg_chaiscript->add(chaiscript::constructor<glm::vec2()>(), "vec2");
+        arg_chaiscript->add(chaiscript::fun(&glm::vec2::x), "x");
+        arg_chaiscript->add(chaiscript::fun(&glm::vec2::y), "y");
         arg_chaiscript->add(chaiscript::fun([](glm::vec2 a, glm::vec2 b) { return a + b; }), "+");
         arg_chaiscript->add(chaiscript::fun([](glm::vec2 a, glm::vec2 b) { return a - b; }), "-");
         arg_chaiscript->add(chaiscript::fun([](glm::vec2 a, glm::vec2 b) { return a * b; }), "*");
