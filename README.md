@@ -8,7 +8,7 @@ Builds and runs on Windows, Linux and WebAssembly.
 
 TRY IT HERE: http://dungeoncrawler.dx.am/ (Requires a browser with webassembly-support)
 
-![alt tag](https://github.com/mlavik1/Retro3D/blob/master/Media/Screenshots/Retro3D-2.jpg)
+![alt tag](https://github.com/mlavik1/Retro3D/blob/master/Media/Screenshots/Retro3D-3.jpg)
 
 Features:
 - Raytraced 3D rendering, similar to old games like Wolfenstein (raytracing on a 2D grid).

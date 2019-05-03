@@ -127,7 +127,9 @@ namespace Retro3D
 
 		arg_chaiscript->add(chaiscript::user_type<SpriteComponent>(), "R3DSpriteComponent");
 		arg_chaiscript->add(chaiscript::fun(&SpriteComponent::SetTexture), "SetTexture");
-		arg_chaiscript->add(chaiscript::base_class<Component, SpriteComponent>());
+		arg_chaiscript->add(chaiscript::fun(&SpriteComponent::SetupAnimation), "SetupAnimation");
+        arg_chaiscript->add(chaiscript::fun(&SpriteComponent::PlayAnimation), "PlayAnimation");
+        arg_chaiscript->add(chaiscript::base_class<Component, SpriteComponent>());
 
 		arg_chaiscript->add(chaiscript::user_type<CameraComponent>(), "R3DCameraComponent");
 		arg_chaiscript->add(chaiscript::base_class<Component, CameraComponent>());
