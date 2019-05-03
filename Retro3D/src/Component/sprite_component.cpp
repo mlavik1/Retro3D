@@ -40,7 +40,7 @@ namespace Retro3D
             if (mAnimationPlaybackInfo.mCurrTime > mAnimationPlaybackInfo.mDuration)
             {
                 if(mAnimationPlaybackInfo.mLooping)
-                    mAnimationPlaybackInfo.mCurrTime -= mAnimationPlaybackInfo.mDuration * (std::floorf(mAnimationPlaybackInfo.mCurrTime / mAnimationPlaybackInfo.mDuration));
+                    mAnimationPlaybackInfo.mCurrTime -= mAnimationPlaybackInfo.mDuration * (std::floor(mAnimationPlaybackInfo.mCurrTime / mAnimationPlaybackInfo.mDuration));
             }
 
             float tTime = mAnimationPlaybackInfo.mCurrTime / mAnimationPlaybackInfo.mDuration;
