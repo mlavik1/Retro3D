@@ -2,6 +2,7 @@
 
 #include "Graphics/texture.h"
 #include "Misc/debug.h"
+#include <cmath>
 
 namespace Retro3D
 {
