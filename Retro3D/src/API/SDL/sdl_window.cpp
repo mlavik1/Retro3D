@@ -6,7 +6,7 @@ namespace Retro3D
 	SDLWindow::SDLWindow()
 	{
 		mSDLWindow = SDL_CreateWindow("2.5D test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
-		mSDLRenderer = SDL_CreateRenderer(mSDLWindow, -1, SDL_RENDERER_ACCELERATED);
+		mSDLRenderer = SDL_CreateRenderer(mSDLWindow, -1, SDL_RENDERER_SOFTWARE);
 
 		/*** SDL initialisation ***/
 		SDL_RendererInfo info;

@@ -20,12 +20,8 @@ int main(int argc, char** argv)
     if (argc > 1)
         projectPath = argv[1];
 
-    // TEMP TEST
-    //projectPath = "projects/samples/maze"; // TODO: REMOVE ME
-
 	GameEngine* engine = GameEngine::CreateGameEngine(projectPath);
-
 	engine->StartEngine();
-    
+
 	return 0;
 }

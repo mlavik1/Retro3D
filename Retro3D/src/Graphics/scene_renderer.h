@@ -90,8 +90,10 @@ namespace Retro3D
 	public:
 		const glm::vec3 mPosition;
 		const Texture* mTexture;
-		SpriteRenderObject(const glm::vec3& arg_pos, const Retro3D::Texture* arg_texture)
-			: mPosition(arg_pos), mTexture(arg_texture) 
+        const glm::vec2 mUVOffset;
+        const glm::vec2 mUVScale;
+		SpriteRenderObject(const glm::vec3& arg_pos, const Retro3D::Texture* arg_texture, const glm::vec2& arg_uvoffset, const glm::vec2& arg_uvscale)
+			: mPosition(arg_pos), mTexture(arg_texture) , mUVOffset(arg_uvoffset), mUVScale(arg_uvscale)
 		{ }
 	};
 }

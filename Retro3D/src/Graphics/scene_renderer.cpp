@@ -230,12 +230,12 @@ namespace Retro3D
 		for (SpriteComponent* comp : spriteComps)
 		{
 			const glm::vec3 dirToCompCentre = comp->GetActor()->GetTransform().GetPosition() - mCameraComponent->GetCameraTransform().GetPosition();
-			if (comp->GetVisibleTexture() != nullptr
+			if (comp->GetTexture() != nullptr
 				&& glm::dot(mCameraComponent->GetCameraTransform().GetForwardVector(), dirToCompCentre) > 0.0f)
 			{
 				const glm::vec3 actorPos = comp->GetActor()->GetTransform().GetPosition();
 				const float dist = glm::length(actorPos - camPos);
-				renderObjects.emplace(dist, SpriteRenderObject(comp->GetActor()->GetTransform().GetPosition(), comp->GetVisibleTexture()));
+				renderObjects.emplace(dist, SpriteRenderObject(comp->GetActor()->GetTransform().GetPosition(), comp->GetTexture(), comp->mUVOffset, comp->mUVScale));
 			}
 		}
 		
@@ -465,6 +465,9 @@ namespace Retro3D
 			const float spriteHeight = 1.0f; // TODO
 			const glm::vec3 spriteLeftPos = spriteCentrePos - camRight * 0.5f * spriteWidth;
 
+            const glm::vec2 uvOffset = (*iter).second.mUVOffset;
+            const glm::vec2 uvScale = (*iter).second.mUVScale;
+
 			// calculate sprite pos local to camera space
 			const glm::vec2 w1 = spriteCentrePos - screenCentreWorld;
 			const glm::vec2 w2 = spriteLeftPos - screenCentreWorld;
@@ -509,8 +512,9 @@ namespace Retro3D
 				const int endX2 = std::min(endX, mTexWidth - 1);
 				for (int x = startX2; x < endX2; x++)
 				{
-					const float relXOffset = ((x - startX) / (float)spriteWidthScreenSpace);
-					const float uCoord = relXOffset * spriteTexture.GetSDLSurface()->w;
+                    const float relXOffset = ((x - startX) / (float)spriteWidthScreenSpace);
+                    const float uNorm = relXOffset * uvScale.x + uvOffset.x;
+					const float uCoord = uNorm * spriteTexture.GetSDLSurface()->w;
 					const float xOFfsetFromCentre = (relXOffset - 0.5f) * spriteWidth; // dist from sprite centre
 
 					// Compare depth to depth buffer
@@ -523,7 +527,7 @@ namespace Retro3D
 					for (int z = startZ; z < endZ; z++)
 					{
 						const int offset = (mTexWidth * 4 * z) + x * 4;
-						const float vCoord = (z - startZ) / (float)spriteWidthScreenSpace;
+                        const float vCoord = ((z - startZ) / (float)spriteWidthScreenSpace) * uvScale.y + uvOffset.y;
 						const glm::vec2 uv(uCoord, vCoord);
 						const Uint32 pixelColour = getpixel(spriteTexture.GetSDLSurface(), static_cast<int>(uv.x), static_cast<int>(uv.y * spriteTexture.GetSDLSurface()->h));
 						const Uint8 r = pixelColour;
