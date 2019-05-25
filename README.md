@@ -28,7 +28,8 @@ __WINDOWS__
 - Build and run the "Game" project (IN RELEASE CONFIGURATION - Debug will be very slow!)
 
 __LINUX__
-- Run aptget.sh (or manually do apt-get on the dependencies)
+- Open the terminal and change directory ("cd" command) to the root folder of the repository.
+- Run aptget.sh (or manually do apt-get on the dependencies). Note: if you get "permission denied", execute "chmod +x the_file_name" in the terminal first.
 - Run CMake: `cmake .`
 - Build the "Game" project (or make your own project based on that): `make Game`
 - Go to "projects/samples" and copy the "resources" folder of the samle you want to use into the same folder as the build executable.
